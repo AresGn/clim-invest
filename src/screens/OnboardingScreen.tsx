@@ -55,6 +55,10 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     navigation.navigate('Registration');
   };
 
+  const handleLogin = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <View
       style={styles.container}
@@ -117,13 +121,23 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
             accessibilityHint="Passer l'introduction et aller directement à l'inscription"
           />
         )}
-        
+
         <AccessibleButton
           title={currentStep === steps.length - 1 ? "Commencer" : "Suivant"}
           onPress={handleNext}
           accessibilityHint="Appuyez pour continuer vers l'étape suivante"
           style={styles.primaryButton}
         />
+
+        {currentStep === steps.length - 1 && (
+          <AccessibleButton
+            title="J'ai déjà un compte"
+            onPress={handleLogin}
+            style={styles.loginButton}
+            textStyle={styles.loginButtonText}
+            accessibilityHint="Se connecter avec un compte existant"
+          />
+        )}
       </View>
     </View>
   );
@@ -200,5 +214,15 @@ const styles = StyleSheet.create({
   skipButtonText: {
     color: COLORS.primary,
     fontWeight: '600',
+  },
+  loginButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    paddingVertical: 8,
+  },
+  loginButtonText: {
+    color: COLORS.text.secondary,
+    fontWeight: '500',
+    fontSize: 14,
   },
 });

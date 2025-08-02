@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { User, AuthState } from '../../types/user';
+import { StorageService } from '../../services/storageService';
 
 // Actions asynchrones
 export const registerUser = createAsyncThunk(
@@ -7,7 +8,7 @@ export const registerUser = createAsyncThunk(
   async (userData: Partial<User>) => {
     // Simulation d'un appel API
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     const newUser: User = {
       id: Date.now().toString(),
       name: userData.name || '',
@@ -18,8 +19,20 @@ export const registerUser = createAsyncThunk(
       registrationDate: new Date().toISOString(),
       isActive: true
     };
-    
+
+    // Sauvegarder l'utilisateur dans le stockage local
+    await StorageService.saveUser(newUser);
+    await StorageService.setOnboardingCompleted();
+
     return newUser;
+  }
+);
+
+export const loadUserFromStorage = createAsyncThunk(
+  'auth/loadUserFromStorage',
+  async () => {
+    const user = await StorageService.getUser();
+    return user;
   }
 );
 
@@ -28,7 +41,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: { phone: string }) => {
     // Simulation d'un appel API
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Retourner un utilisateur simulé
     const user: User = {
       id: '1',
@@ -40,7 +53,10 @@ export const loginUser = createAsyncThunk(
       registrationDate: new Date().toISOString(),
       isActive: true
     };
-    
+
+    // Sauvegarder l'utilisateur dans le stockage local
+    await StorageService.saveUser(user);
+
     return user;
   }
 );
@@ -60,6 +76,8 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
+      // Supprimer de AsyncStorage
+      StorageService.removeUser();
     },
     clearError: (state) => {
       state.error = null;
@@ -94,6 +112,20 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Erreur lors de la connexion';
+      })
+      // Load User from Storage
+      .addCase(loadUserFromStorage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loadUserFromStorage.fulfilled, (state, action: PayloadAction<User | null>) => {
+        state.loading = false;
+        if (action.payload) {
+          state.user = action.payload;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(loadUserFromStorage.rejected, (state) => {
+        state.loading = false;
       });
   }
 });

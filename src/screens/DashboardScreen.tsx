@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchWeatherAlerts, fetchCoverageStatus } from '../store/slices/insuranceSlice';
+import { useWeatherData, useWeatherAlerts } from '../hooks/useWeatherData';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState, AppDispatch } from '../store/store';
@@ -13,8 +14,24 @@ interface DashboardScreenProps {
 export default function DashboardScreen({ navigation }: DashboardScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { coverage, weatherAlerts, loading } = useSelector((state: RootState) => state.insurance);
+  const { coverage, loading } = useSelector((state: RootState) => state.insurance);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Utilisation des hooks météo avec les vraies APIs
+  const { weatherData, loading: weatherLoading, error: weatherError, refetch } = useWeatherData(
+    user?.location.latitude || null,
+    user?.location.longitude || null,
+    user?.cropType,
+    user?.farmSize,
+    { autoRefresh: true, refreshInterval: 30, enableRiskAnalysis: true }
+  );
+
+  const { alerts: weatherAlerts } = useWeatherAlerts(
+    user?.location.latitude || null,
+    user?.location.longitude || null,
+    user?.cropType,
+    user?.farmSize
+  );
 
   useEffect(() => {
     if (user) {
@@ -24,10 +41,10 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
 
   const loadDashboardData = async () => {
     if (!user) return;
-    
+
     await Promise.all([
-      dispatch(fetchWeatherAlerts(user.location)),
-      dispatch(fetchCoverageStatus(user.id))
+      dispatch(fetchCoverageStatus(user.id)),
+      refetch() // Recharger les données météo
     ]);
   };
 
@@ -101,53 +118,100 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         </View>
       )}
 
+      {/* Données météo actuelles */}
+      {weatherData && (
+        <View style={styles.weatherSection}>
+          <Text style={styles.sectionTitle}>Météo Actuelle 🌤️</Text>
+          <View style={styles.weatherCard}>
+            <View style={styles.weatherRow}>
+              <Text style={styles.weatherLabel}>Température</Text>
+              <Text style={styles.weatherValue}>{weatherData.current.temperature.toFixed(1)}°C</Text>
+            </View>
+            <View style={styles.weatherRow}>
+              <Text style={styles.weatherLabel}>Humidité</Text>
+              <Text style={styles.weatherValue}>{weatherData.current.humidity.toFixed(0)}%</Text>
+            </View>
+            <View style={styles.weatherRow}>
+              <Text style={styles.weatherLabel}>Précipitations</Text>
+              <Text style={styles.weatherValue}>{weatherData.current.precipitation.toFixed(1)} mm</Text>
+            </View>
+            <View style={styles.weatherRow}>
+              <Text style={styles.weatherLabel}>Vent</Text>
+              <Text style={styles.weatherValue}>{weatherData.current.windSpeed.toFixed(1)} km/h</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       {/* Alertes météo temps réel */}
       <View style={styles.alertsSection}>
         <Text
           style={styles.sectionTitle}
           accessible={true}
         >
-          Alertes Météo 🌦️
+          Alertes Climatiques 🌦️
         </Text>
-        
+
+        {weatherError && (
+          <View style={styles.errorCard}>
+            <Text style={styles.errorText}>
+              ⚠️ Impossible de récupérer les données météo: {weatherError}
+            </Text>
+          </View>
+        )}
+
         {weatherAlerts.length > 0 ? (
           weatherAlerts.map((alert, index) => (
             <View
               key={index}
               style={[
                 styles.alertCard,
-                alert.severity === 'high' && styles.alertCardHigh,
-                alert.severity === 'medium' && styles.alertCardMedium
+                alert.riskLevel === 'critical' && styles.alertCardCritical,
+                alert.riskLevel === 'high' && styles.alertCardHigh,
+                alert.riskLevel === 'medium' && styles.alertCardMedium
               ]}
-              accessibilityLabel={`Alerte ${alert.type} : ${alert.description}`}
+              accessibilityLabel={`Alerte ${alert.riskType} niveau ${alert.riskLevel}`}
             >
               <View style={styles.alertHeader}>
-                <Text style={styles.alertTitle}>{alert.title}</Text>
+                <Text style={styles.alertTitle}>
+                  {alert.riskType === 'drought' ? '🌵 Sécheresse' :
+                   alert.riskType === 'flood' ? '🌊 Inondation' :
+                   alert.riskType === 'storm' ? '⛈️ Tempête' :
+                   alert.riskType === 'heat_stress' ? '🌡️ Stress thermique' :
+                   '⚠️ Risques multiples'}
+                </Text>
                 <Text style={styles.alertSeverity}>
-                  {alert.severity === 'high' ? '🔴' : alert.severity === 'medium' ? '🟡' : '🟢'}
+                  {alert.riskLevel === 'critical' ? '🔴' :
+                   alert.riskLevel === 'high' ? '🟠' :
+                   alert.riskLevel === 'medium' ? '🟡' : '🟢'}
                 </Text>
               </View>
-              <Text style={styles.alertDescription}>{alert.description}</Text>
-              {alert.actionRequired && (
-                <AccessibleButton
-                  title="Voir les recommandations"
-                  onPress={() => navigation.navigate('WeatherDetails', { alert })}
-                  style={styles.alertButton}
-                  accessibilityHint="Voir les actions recommandées pour cette alerte"
-                />
+              <Text style={styles.alertDescription}>
+                Score de risque: {alert.riskScore}/100
+              </Text>
+              {alert.recommendations.map((rec, i) => (
+                <Text key={i} style={styles.alertRecommendation}>• {rec}</Text>
+              ))}
+              {alert.compensationEligible && (
+                <View style={styles.compensationBadge}>
+                  <Text style={styles.compensationText}>💰 Éligible à indemnisation</Text>
+                </View>
               )}
             </View>
           ))
         ) : (
           <View style={styles.noAlertsCard}>
-            <Text 
+            <Text
               style={styles.noAlertsText}
               accessibilityLabel="Aucune alerte météo en cours"
             >
               ✅ Aucune alerte en cours
             </Text>
             <Text style={styles.noAlertsSubtext}>
-              Vos cultures sont dans de bonnes conditions météorologiques
+              {weatherData?.riskAnalysis ?
+                `Niveau de risque: ${weatherData.riskAnalysis.riskLevel}` :
+                'Vos cultures sont dans de bonnes conditions météorologiques'
+              }
             </Text>
           </View>
         )}
@@ -267,8 +331,48 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.text.primary,
   },
+  weatherSection: {
+    margin: 16,
+  },
+  weatherCard: {
+    backgroundColor: COLORS.surface,
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  weatherRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  weatherLabel: {
+    fontSize: ACCESSIBILITY_SETTINGS.defaultFontSize,
+    color: COLORS.text.secondary,
+  },
+  weatherValue: {
+    fontSize: ACCESSIBILITY_SETTINGS.defaultFontSize,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+  },
   alertsSection: {
     margin: 16,
+  },
+  errorCard: {
+    backgroundColor: COLORS.error + '20',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.error,
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: 14,
   },
   sectionTitle: {
     fontSize: 20,
@@ -283,6 +387,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderLeftWidth: 4,
     borderLeftColor: COLORS.warning,
+  },
+  alertCardCritical: {
+    borderLeftColor: COLORS.error,
+    backgroundColor: COLORS.error + '10',
   },
   alertCardHigh: {
     borderLeftColor: COLORS.error,
@@ -316,6 +424,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     minHeight: 40,
+  },
+  alertRecommendation: {
+    fontSize: 13,
+    color: COLORS.text.secondary,
+    marginBottom: 4,
+    lineHeight: 18,
+  },
+  compensationBadge: {
+    backgroundColor: COLORS.success + '20',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  compensationText: {
+    fontSize: 12,
+    color: COLORS.success,
+    fontWeight: '600',
   },
   noAlertsCard: {
     backgroundColor: COLORS.surface,

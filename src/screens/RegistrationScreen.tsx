@@ -180,6 +180,10 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
                 styles.cropButton,
                 formData.cropType === crop.value && styles.cropButtonSelected
               ]}
+              textStyle={[
+                styles.cropButtonText,
+                formData.cropType === crop.value && styles.cropButtonTextSelected
+              ]}
               accessibilityLabel={crop.accessibilityLabel}
               // accessibilityRole="radio"
               accessibilityState={{ selected: formData.cropType === crop.value }}
@@ -276,6 +280,15 @@ const styles = StyleSheet.create({
   cropButtonSelected: {
     borderColor: COLORS.primary,
     backgroundColor: COLORS.primary + '20',
+  },
+  cropButtonText: {
+    color: COLORS.text.primary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  cropButtonTextSelected: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
   primaryButton: {
     marginTop: 32,
