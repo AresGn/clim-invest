@@ -232,21 +232,21 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
 
           <AccessibleButton
             title="📊 Historique"
-            onPress={() => navigation.navigate('History')}
+            onPress={() => navigation.getParent()?.navigate('History')}
             style={styles.secondaryButton}
             accessibilityHint="Consulter vos paiements et réclamations passées"
           />
 
           <AccessibleButton
             title="💰 Paiements"
-            onPress={() => navigation.navigate('Payments')}
+            onPress={() => navigation.getParent()?.navigate('Payments')}
             style={styles.secondaryButton}
             accessibilityHint="Gérer vos paiements et renouvellements"
           />
 
           <AccessibleButton
             title="⚙️ Paramètres"
-            onPress={() => navigation.navigate('Settings')}
+            onPress={() => navigation.getParent()?.navigate('Settings')}
             style={styles.secondaryButton}
             accessibilityHint="Modifier vos préférences et informations"
           />
