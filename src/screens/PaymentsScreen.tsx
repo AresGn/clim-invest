@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { useSelector } from 'react-redux';
 import AccessibleButton from '../components/common/AccessibleButton';
+import PaymentCountdown from '../components/common/PaymentCountdown';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import { RootState } from '../store/store';
 
 interface PaymentsScreenProps {
   navigation: any;
@@ -9,6 +12,7 @@ interface PaymentsScreenProps {
 
 export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
   const [loading, setLoading] = useState(false);
+  const { coverage } = useSelector((state: RootState) => state.insurance);
 
   const handlePayment = async (method: string) => {
     setLoading(true);
@@ -51,30 +55,26 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AccessibleButton
-          title="← Retour"
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-          textStyle={styles.backButtonText}
-          accessibilityHint="Retourner au tableau de bord"
-        />
         <Text style={styles.title}>Paiements</Text>
       </View>
 
       <ScrollView style={styles.content}>
+        {/* Chrono prochaine échéance - synchronisé avec l'écran d'accueil */}
+        <PaymentCountdown
+          paymentDate="2025-07-19" // Date du dernier paiement (19 juillet 2025)
+          cycleDays={30} // Cycle de 30 jours
+        />
+
         {/* Informations de paiement */}
         <View style={styles.paymentInfo}>
           <Text style={styles.sectionTitle}>Prime mensuelle</Text>
           <View style={styles.amountContainer}>
-            <Text style={styles.amount}>800 FCFA</Text>
-            <Text style={styles.amountDescription}>
-              Prime d'assurance pour votre exploitation de 2 hectares
+            <Text style={styles.amount}>
+              {coverage?.premium?.toLocaleString() || '800'} FCFA
             </Text>
-          </View>
-          
-          <View style={styles.dueDate}>
-            <Text style={styles.dueDateLabel}>Prochaine échéance</Text>
-            <Text style={styles.dueDateValue}>15 Février 2025</Text>
+            <Text style={styles.amountDescription}>
+              Prime d'assurance pour votre exploitation de {coverage?.farmSize || 2} hectares
+            </Text>
           </View>
         </View>
 
@@ -111,26 +111,30 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
           <View style={styles.paymentHistory}>
             <View style={styles.historyItem}>
               <View style={styles.historyDate}>
-                <Text style={styles.historyDay}>15</Text>
-                <Text style={styles.historyMonth}>JAN</Text>
+                <Text style={styles.historyDay}>19</Text>
+                <Text style={styles.historyMonth}>JUL</Text>
               </View>
               <View style={styles.historyDetails}>
                 <Text style={styles.historyTitle}>Prime d'assurance</Text>
                 <Text style={styles.historyMethod}>Orange Money</Text>
               </View>
-              <Text style={styles.historyAmount}>5,000 FCFA</Text>
+              <Text style={styles.historyAmount}>
+                {coverage?.premium?.toLocaleString() || '800'} FCFA
+              </Text>
             </View>
-            
+
             <View style={styles.historyItem}>
               <View style={styles.historyDate}>
-                <Text style={styles.historyDay}>15</Text>
-                <Text style={styles.historyMonth}>DÉC</Text>
+                <Text style={styles.historyDay}>19</Text>
+                <Text style={styles.historyMonth}>JUN</Text>
               </View>
               <View style={styles.historyDetails}>
                 <Text style={styles.historyTitle}>Prime d'assurance</Text>
                 <Text style={styles.historyMethod}>Wave</Text>
               </View>
-              <Text style={styles.historyAmount}>5,000 FCFA</Text>
+              <Text style={styles.historyAmount}>
+                {coverage?.premium?.toLocaleString() || '800'} FCFA
+              </Text>
             </View>
           </View>
         </View>
@@ -160,19 +164,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: 24,
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  backButton: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 0,
-    paddingVertical: 8,
-    minHeight: 40,
-    marginRight: 16,
-  },
-  backButtonText: {
-    color: COLORS.text.inverse,
-    fontSize: 16,
   },
   title: {
     fontSize: 24,

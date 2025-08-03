@@ -16,6 +16,9 @@ import ClaimsScreen from '../screens/ClaimsScreen';
 import WeatherTestScreen from '../screens/WeatherTestScreen';
 import SubscribeInsuranceScreen from '../screens/SubscribeInsuranceScreen';
 import ReferColleagueScreen from '../screens/ReferColleagueScreen';
+import InsightsScreen from '../screens/InsightsScreen';
+import CreditApplicationScreen from '../screens/CreditApplicationScreen';
+import DetailedAnalyticsScreen from '../screens/DetailedAnalyticsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,6 +42,17 @@ function DashboardStack() {
   );
 }
 
+// Stack pour les Analyses
+function InsightsStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="InsightsMain" component={InsightsScreen} />
+      <Stack.Screen name="CreditApplication" component={CreditApplicationScreen} />
+      <Stack.Screen name="DetailedAnalytics" component={DetailedAnalyticsScreen} />
+    </Stack.Navigator>
+  );
+}
+
 // Stack pour les Paramètres
 function SettingsStack() {
   return (
@@ -54,6 +68,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons = {
     Dashboard: focused ? '🏡' : '🏠',
     History: focused ? '📈' : '📊',
+    Insights: focused ? '🔍' : '🧠',
     Payments: focused ? '💳' : '💰',
     Settings: focused ? '⚙️' : '🔧'
   };
@@ -62,6 +77,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const notificationCounts = {
     Dashboard: 2, // Alertes météo
     History: 0,
+    Insights: 1, // Nouvelles analyses disponibles
     Payments: 1, // Paiement en attente
     Settings: 0
   };
@@ -131,12 +147,20 @@ export default function TabNavigator() {
           tabBarAccessibilityLabel: 'Accueil - Tableau de bord principal'
         }}
       />
-      <Tab.Screen 
-        name="History" 
+      <Tab.Screen
+        name="History"
         component={HistoryScreen}
         options={{
           title: 'Historique',
           tabBarAccessibilityLabel: 'Historique des transactions'
+        }}
+      />
+      <Tab.Screen
+        name="Insights"
+        component={InsightsStack}
+        options={{
+          title: 'Analyses',
+          tabBarAccessibilityLabel: 'Analyses agricoles et crédit'
         }}
       />
       <Tab.Screen 

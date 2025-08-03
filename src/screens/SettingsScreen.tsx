@@ -84,13 +84,6 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AccessibleButton
-          title="← Retour"
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-          textStyle={styles.backButtonText}
-          accessibilityHint="Retourner au tableau de bord"
-        />
         <Text style={styles.title}>Paramètres</Text>
       </View>
 
@@ -161,19 +154,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: 24,
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  backButton: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 0,
-    paddingVertical: 8,
-    minHeight: 40,
-    marginRight: 16,
-  },
-  backButtonText: {
-    color: COLORS.text.inverse,
-    fontSize: 16,
   },
   title: {
     fontSize: 24,
