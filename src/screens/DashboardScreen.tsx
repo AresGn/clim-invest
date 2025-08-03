@@ -69,37 +69,7 @@ const getWeatherValue = (weatherData: any, type: string): string => {
   return '--';
 };
 
-// Helper functions for risk analysis display
-const getRiskLevelDisplay = (level: string): string => {
-  switch (level) {
-    case 'high': return '🔴 High';
-    case 'medium': return '🟡 Medium';
-    case 'low': return '🟢 Low';
-    default: return '⚪ Unknown';
-  }
-};
 
-const getRiskIcon = (type: string): string => {
-  switch (type) {
-    case 'drought': return '🌵';
-    case 'heat_stress': return '🔥';
-    case 'fungal_disease': return '🍄';
-    case 'flood': return '🌊';
-    case 'pest': return '🐛';
-    default: return '⚠️';
-  }
-};
-
-const getRiskTypeDisplay = (type: string): string => {
-  switch (type) {
-    case 'drought': return 'Drought Risk';
-    case 'heat_stress': return 'Heat Stress';
-    case 'fungal_disease': return 'Fungal Disease';
-    case 'flood': return 'Flood Risk';
-    case 'pest': return 'Pest Risk';
-    default: return 'Unknown Risk';
-  }
-};
 
 export default function DashboardScreen({ navigation }: DashboardScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
@@ -108,7 +78,7 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
   const [refreshing, setRefreshing] = useState(false);
 
   // Using updated weather hook with hybrid service
-  const { weatherData, riskAnalysis, loading: weatherLoading, error: weatherError, refetch } = useWeatherData(
+  const { weatherData, loading: weatherLoading, error: weatherError, refetch } = useWeatherData(
     user?.location.latitude,
     user?.location.longitude
   );
@@ -264,46 +234,7 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         </View>
       )}
 
-      {/* Climate risk analysis - updated for hybrid service */}
-      {riskAnalysis && (
-        <View style={styles.riskSection}>
-          <Text style={styles.sectionTitle}>⚠️ Risk Analysis</Text>
-          <View style={styles.riskCard}>
-            <View style={styles.riskHeader}>
-              <Text style={styles.riskLevel}>
-                Overall Risk: {getRiskLevelDisplay(riskAnalysis.overall_risk)}
-              </Text>
-              <Text style={styles.riskScore}>
-                Score: {riskAnalysis.risk_score || 0}/100
-              </Text>
-            </View>
 
-            {riskAnalysis.risks && riskAnalysis.risks.length > 0 && (
-              <View style={styles.risksList}>
-                {riskAnalysis.risks.slice(0, 3).map((risk: any, index: number) => (
-                  <View key={index} style={styles.riskItem}>
-                    <Text style={styles.riskType}>
-                      {getRiskIcon(risk.type)} {getRiskTypeDisplay(risk.type)}
-                    </Text>
-                    <Text style={styles.riskProbability}>
-                      {risk.probability}% probability
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {riskAnalysis.recommendations && riskAnalysis.recommendations.length > 0 && (
-              <View style={styles.recommendationsSection}>
-                <Text style={styles.recommendationsTitle}>💡 Recommendations:</Text>
-                <Text style={styles.recommendationText}>
-                  {riskAnalysis.recommendations[0]}
-                </Text>
-              </View>
-            )}
-          </View>
-        </View>
-      )}
 
       {/* Recent disaster history */}
       <DisasterHistorySection />
@@ -452,69 +383,5 @@ const styles = StyleSheet.create({
   tertiaryButton: {
     backgroundColor: COLORS.accent,
   },
-  // Risk analysis styles
-  riskSection: {
-    margin: 16,
-  },
-  riskCard: {
-    backgroundColor: COLORS.surface,
-    padding: 16,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  riskHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  riskLevel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.text.primary,
-  },
-  riskScore: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: COLORS.text.secondary,
-  },
-  risksList: {
-    marginBottom: 12,
-  },
-  riskItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  riskType: {
-    fontSize: 14,
-    color: COLORS.text.primary,
-    flex: 1,
-  },
-  riskProbability: {
-    fontSize: 12,
-    color: COLORS.text.secondary,
-    fontWeight: '500',
-  },
-  recommendationsSection: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.background,
-    paddingTop: 12,
-  },
-  recommendationsTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.text.primary,
-    marginBottom: 4,
-  },
-  recommendationText: {
-    fontSize: 13,
-    color: COLORS.text.secondary,
-    lineHeight: 18,
-  },
+
 });

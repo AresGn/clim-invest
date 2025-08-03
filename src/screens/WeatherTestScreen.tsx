@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { openMeteoService } from '../services/openMeteoService';
-import { climateRiskService } from '../services/climateRiskService';
 import { weatherValidationService } from '../services/weatherValidationService';
 import { validateApiKeys } from '../config/env';
 import AccessibleButton from '../components/common/AccessibleButton';
@@ -86,21 +85,7 @@ export default function WeatherTestScreen({ navigation }: WeatherTestScreenProps
         });
       }
 
-      // Test 5: Analyse des risques climatiques
-      try {
-        const riskAnalysis = await climateRiskService.analyzeRisk(lat, lon, 'maize', 2);
-        results.push({
-          test: 'Analyse des risques climatiques',
-          status: riskAnalysis.riskLevel === 'critical' ? 'warning' : 'success',
-          message: `Niveau: ${riskAnalysis.riskLevel}, Score: ${riskAnalysis.riskScore}/100, Type: ${riskAnalysis.riskType}`
-        });
-      } catch (error) {
-        results.push({
-          test: 'Analyse des risques climatiques',
-          status: 'error',
-          message: `Erreur: ${error}`
-        });
-      }
+
 
       // Test 6: Validation croisée des données
       try {

@@ -16,12 +16,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   const handleLogout = () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      'Déconnexion',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: 'Annuler', style: 'cancel' },
         {
-          text: 'Logout',
+          text: 'Déconnexion',
           style: 'destructive',
           onPress: () => dispatch(logout())
         }
@@ -32,60 +32,60 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const settingsOptions = [
     {
       id: 'profile',
-      title: 'Profile',
-      subtitle: 'Edit your personal information',
+      title: 'Profil',
+      subtitle: 'Modifier vos informations personnelles',
       icon: '👤',
-      onPress: () => Alert.alert('Profile', 'Feature in development')
+      onPress: () => Alert.alert('Profil', 'Fonctionnalité en développement')
     },
     {
       id: 'notifications',
       title: 'Notifications',
-      subtitle: 'Manage SMS and push alerts',
+      subtitle: 'Gérer les alertes SMS et push',
       icon: '🔔',
-      onPress: () => Alert.alert('Notifications', 'Feature in development')
+      onPress: () => Alert.alert('Notifications', 'Fonctionnalité en développement')
     },
     {
       id: 'security',
-      title: 'Security',
-      subtitle: 'Password and authentication',
+      title: 'Sécurité',
+      subtitle: 'Mot de passe et authentification',
       icon: '🔒',
-      onPress: () => Alert.alert('Security', 'Feature in development')
+      onPress: () => Alert.alert('Sécurité', 'Fonctionnalité en développement')
     },
     {
       id: 'language',
-      title: 'Language',
-      subtitle: 'French, Mooré, Dioula',
+      title: 'Langue',
+      subtitle: 'Français, Mooré, Dioula',
       icon: '🌍',
-      onPress: () => Alert.alert('Language', 'Feature in development')
+      onPress: () => Alert.alert('Langue', 'Fonctionnalité en développement')
     },
     {
       id: 'help',
-      title: 'Help & Support',
-      subtitle: 'FAQ, Contact, Tutorials',
+      title: 'Aide & Support',
+      subtitle: 'FAQ, Contact, Tutoriels',
       icon: '❓',
-      onPress: () => Alert.alert('Help', 'Contact us at +226 XX XX XX XX')
+      onPress: () => Alert.alert('Aide', 'Contactez-nous au +226 XX XX XX XX')
     },
     {
       id: 'data_usage',
-      title: 'Data Sources',
-      subtitle: 'API status and data quality',
+      title: 'Sources de Données',
+      subtitle: 'Statut API et qualité des données',
       icon: '📊',
-      onPress: () => Alert.alert('Data Sources', 'NASA POWER: ✅ Active\nOpenWeatherMap: ✅ Active\nSoilGrids: ⚠️ Fallback mode')
+      onPress: () => Alert.alert('Sources de Données', 'OpenEPI: ✅ Actif\nNASA POWER: ✅ Actif\nSoilGrids: ⚠️ Mode de secours')
     },
     {
       id: 'about',
-      title: 'About',
+      title: 'À Propos',
       subtitle: 'Version 1.0.0 - Hybrid OpenEPI',
       icon: 'ℹ️',
-      onPress: () => Alert.alert('About', 'ClimInvest v1.0.0\nSmart Agricultural Insurance\nPowered by OpenEPI hybrid service')
+      onPress: () => Alert.alert('À Propos', 'ClimInvest v1.0.0\nAssurance Agricole Intelligente\nPowered by OpenEPI hybrid service')
     }
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Manage your account and preferences</Text>
+        <Text style={styles.title}>Paramètres</Text>
+        <Text style={styles.subtitle}>Gérez votre compte et vos préférences</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -110,14 +110,18 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
         {/* Settings options */}
         <View style={styles.settingsSection}>
-          {settingsOptions.map((option) => (
-            <View key={option.id} style={styles.settingItemContainer}>
+          {settingsOptions.map((option, index) => (
+            <View key={option.id} style={[
+              styles.settingItemContainer,
+              index === settingsOptions.length - 1 && styles.lastSettingItem
+            ]}>
               <AccessibleButton
                 title=""
                 onPress={option.onPress}
                 style={styles.settingItem}
                 accessibilityLabel={`${option.title}: ${option.subtitle}`}
-                accessibilityHint={`Open ${option.title}`}
+                accessibilityHint={`Ouvrir ${option.title}`}
+                accessibilityRole="button"
               >
                 <View style={styles.settingItemContent}>
                   <View style={styles.settingItemLeft}>
@@ -137,18 +141,18 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         {/* Logout button */}
         <View style={styles.logoutSection}>
           <AccessibleButton
-            title="🚪 Logout"
+            title="🚪 Déconnexion"
             onPress={handleLogout}
             style={styles.logoutButton}
             textStyle={styles.logoutButtonText}
-            accessibilityHint="Logout from the application"
+            accessibilityHint="Se déconnecter de l'application"
           />
         </View>
 
         {/* Legal information */}
         <View style={styles.legalSection}>
           <Text style={styles.legalText}>
-            By using ClimInvest, you agree to our terms of service and privacy policy.
+            En utilisant ClimInvest, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.
           </Text>
           <Text style={styles.versionText}>
             Version 1.0.0 - Hybrid OpenEPI • © 2025 ClimInvest
@@ -249,16 +253,18 @@ const styles = StyleSheet.create({
   },
   settingItemContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.background,
+    borderBottomColor: COLORS.text.disabled + '30',
+    marginBottom: 0,
   },
   settingItem: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: 'transparent',
     borderRadius: 0,
     paddingHorizontal: 0,
     paddingVertical: 0,
     elevation: 0,
     shadowOpacity: 0,
     marginBottom: 0,
+    minHeight: 60,
   },
   settingItemContent: {
     flexDirection: 'row',
@@ -266,6 +272,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 16,
+    backgroundColor: COLORS.surface,
+    borderRadius: 0,
   },
   settingItemLeft: {
     flexDirection: 'row',
@@ -280,19 +288,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingTitle: {
-    fontSize: ACCESSIBILITY_SETTINGS.defaultFontSize,
+    fontSize: 16,
     fontWeight: '600',
     color: COLORS.text.primary,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   settingSubtitle: {
     fontSize: 14,
     color: COLORS.text.secondary,
+    lineHeight: 18,
   },
   settingArrow: {
     fontSize: 20,
-    color: COLORS.text.disabled,
+    color: COLORS.text.secondary,
     fontWeight: '300',
+  },
+  lastSettingItem: {
+    borderBottomWidth: 0,
   },
 
   logoutSection: {

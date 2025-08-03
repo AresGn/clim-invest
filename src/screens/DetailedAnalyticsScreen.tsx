@@ -13,13 +13,12 @@ const { width } = Dimensions.get('window');
 
 export default function DetailedAnalyticsScreen({ navigation }: DetailedAnalyticsScreenProps) {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [selectedTab, setSelectedTab] = useState<'soil' | 'yield' | 'market' | 'climate'>('soil');
+  const [selectedTab, setSelectedTab] = useState<'soil' | 'yield' | 'market'>('soil');
 
   const tabs = [
     { id: 'soil', label: '🌱 Sol', title: 'Analyse Pédologique' },
     { id: 'yield', label: '📈 Rendements', title: 'Historique des Rendements' },
-    { id: 'market', label: '💰 Marché', title: 'Analyse du Marché' },
-    { id: 'climate', label: '🌤️ Climat', title: 'Risques Climatiques' }
+    { id: 'market', label: '💰 Marché', title: 'Analyse du Marché' }
   ];
 
   const soilAnalysis = {
@@ -58,21 +57,7 @@ export default function DetailedAnalyticsScreen({ navigation }: DetailedAnalytic
     }
   };
 
-  const climateAnalysis = {
-    current_risks: [
-      { type: 'drought', probability: 30, impact: 'medium', timeframe: '2 semaines' },
-      { type: 'heat_wave', probability: 45, impact: 'low', timeframe: '1 semaine' }
-    ],
-    seasonal_outlook: {
-      rainfall: { expected: 850, normal: 900, status: 'below_normal' },
-      temperature: { expected: 28.5, normal: 27.8, status: 'above_normal' }
-    },
-    adaptation_recommendations: [
-      'Irrigation d\'appoint recommandée',
-      'Paillage pour conserver l\'humidité',
-      'Surveillance accrue des parasites'
-    ]
-  };
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -227,56 +212,7 @@ export default function DetailedAnalyticsScreen({ navigation }: DetailedAnalytic
     </View>
   );
 
-  const renderClimateAnalysis = () => (
-    <View style={styles.analysisContent}>
-      <Text style={styles.analysisDescription}>
-        Évaluation des risques climatiques et recommandations d'adaptation
-      </Text>
-      
-      {/* Risques actuels */}
-      <View style={styles.parameterCard}>
-        <Text style={styles.parameterName}>⚠️ Risques Actuels</Text>
-        {climateAnalysis.current_risks.map((risk, index) => (
-          <View key={index} style={styles.riskRow}>
-            <Text style={styles.riskType}>
-              {risk.type === 'drought' ? '🌵 Sécheresse' : '🔥 Vague de chaleur'}
-            </Text>
-            <Text style={styles.riskProbability}>{risk.probability}%</Text>
-            <Text style={styles.riskTimeframe}>{risk.timeframe}</Text>
-          </View>
-        ))}
-      </View>
 
-      {/* Perspectives saisonnières */}
-      <View style={styles.parameterCard}>
-        <Text style={styles.parameterName}>🌦️ Perspectives Saisonnières</Text>
-        <View style={styles.outlookRow}>
-          <Text style={styles.outlookLabel}>Précipitations attendues</Text>
-          <Text style={styles.outlookValue}>
-            {climateAnalysis.seasonal_outlook.rainfall.expected}mm 
-            (normale: {climateAnalysis.seasonal_outlook.rainfall.normal}mm)
-          </Text>
-        </View>
-        <View style={styles.outlookRow}>
-          <Text style={styles.outlookLabel}>Température moyenne</Text>
-          <Text style={styles.outlookValue}>
-            {climateAnalysis.seasonal_outlook.temperature.expected}°C 
-            (normale: {climateAnalysis.seasonal_outlook.temperature.normal}°C)
-          </Text>
-        </View>
-      </View>
-
-      {/* Recommandations */}
-      <View style={styles.parameterCard}>
-        <Text style={styles.parameterName}>💡 Recommandations d'Adaptation</Text>
-        {climateAnalysis.adaptation_recommendations.map((rec, index) => (
-          <Text key={index} style={styles.recommendation}>
-            • {rec}
-          </Text>
-        ))}
-      </View>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -315,7 +251,6 @@ export default function DetailedAnalyticsScreen({ navigation }: DetailedAnalytic
         {selectedTab === 'soil' && renderSoilAnalysis()}
         {selectedTab === 'yield' && renderYieldAnalysis()}
         {selectedTab === 'market' && renderMarketAnalysis()}
-        {selectedTab === 'climate' && renderClimateAnalysis()}
       </ScrollView>
     </View>
   );
@@ -543,54 +478,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.text.primary,
   },
-  riskRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.background,
-  },
-  riskType: {
-    fontSize: 14,
-    color: COLORS.text.primary,
-    flex: 2,
-  },
-  riskProbability: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.warning,
-    flex: 1,
-    textAlign: 'center',
-  },
-  riskTimeframe: {
-    fontSize: 12,
-    color: COLORS.text.secondary,
-    flex: 1,
-    textAlign: 'right',
-  },
-  outlookRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  outlookLabel: {
-    fontSize: 14,
-    color: COLORS.text.secondary,
-    flex: 1,
-  },
-  outlookValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.text.primary,
-    flex: 1,
-    textAlign: 'right',
-  },
-  recommendation: {
-    fontSize: 14,
-    color: COLORS.text.secondary,
-    marginBottom: 4,
-    lineHeight: 20,
-  },
+
 });
