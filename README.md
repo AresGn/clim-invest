@@ -17,25 +17,19 @@ ClimInvest is a revolutionary mobile application that democratizes access to agr
 
 ## 🎥 Video Demonstration
 
-<div align="center">
-
 ### Video 1 - Application Overview
-  <video width="600" controls>
-    <source src="assets/videos/Video1.mp4" type="video/mp4">
-    Your browser does not support video playback.
-  </video>
+
+[Voir Video 1](https://res.cloudinary.com/dtwx8br7o/video/upload/v1754236059/Video1_gpawi3.mp4)
+
+---
 
 ### Video 2 - Detailed Features
-  <video width="600" controls>
-    <source src="assets/videos/Video2.mp4" type="video/mp4">
-    Your browser does not support video playback.
-  </video>
 
-</div>
+[Voir Video 2](https://res.cloudinary.com/dtwx8br7o/video/upload/v1754236085/Video2_k8nf5s.mp4)
 
 > **Discover ClimInvest in action**: SMS subscription, automatic payout triggers, Analytics tab with credit scoring, and all accessibility features.
 
-*[Click on the videos to see the complete application demonstration]*
+*[Click on the video links to see the complete application demonstration]*
 
 ### Problem Addressed
 
