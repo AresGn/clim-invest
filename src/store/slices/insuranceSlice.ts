@@ -11,8 +11,8 @@ export const fetchCoverageStatus = createAsyncThunk(
     const coverage: Coverage = {
       id: Date.now().toString(),
       userId,
-      amount: 50000, // 50,000 FCFA
-      premium: 5000,  // 5,000 FCFA
+      amount: 30000, // 30,000 FCFA
+      premium: 800,   // 800 FCFA (maximum 1000 FCFA)
       isActive: true,
       startDate: new Date().toISOString(),
       expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),

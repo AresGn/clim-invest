@@ -14,6 +14,8 @@ import PaymentsScreen from '../screens/PaymentsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ClaimsScreen from '../screens/ClaimsScreen';
 import WeatherTestScreen from '../screens/WeatherTestScreen';
+import SubscribeInsuranceScreen from '../screens/SubscribeInsuranceScreen';
+import ReferColleagueScreen from '../screens/ReferColleagueScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -31,6 +33,8 @@ function DashboardStack() {
       <Stack.Screen name="DashboardMain" component={DashboardScreen} />
       <Stack.Screen name="Claims" component={ClaimsScreen} />
       <Stack.Screen name="WeatherTest" component={WeatherTestScreen} />
+      <Stack.Screen name="SubscribeInsurance" component={SubscribeInsuranceScreen} />
+      <Stack.Screen name="ReferColleague" component={ReferColleagueScreen} />
     </Stack.Navigator>
   );
 }

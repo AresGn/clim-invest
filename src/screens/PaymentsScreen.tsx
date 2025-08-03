@@ -66,7 +66,7 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
         <View style={styles.paymentInfo}>
           <Text style={styles.sectionTitle}>Prime mensuelle</Text>
           <View style={styles.amountContainer}>
-            <Text style={styles.amount}>5,000 FCFA</Text>
+            <Text style={styles.amount}>800 FCFA</Text>
             <Text style={styles.amountDescription}>
               Prime d'assurance pour votre exploitation de 2 hectares
             </Text>

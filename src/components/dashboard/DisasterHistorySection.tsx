@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import { climateDataService, DisasterSummary, DisasterEvent } from '../../services/climateDataService';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../../utils/constants';
 
@@ -11,6 +11,9 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
   const [disasterData, setDisasterData] = useState<DisasterSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('recent');
 
   useEffect(() => {
     loadDisasterData();
@@ -51,6 +54,102 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
         return '🟢 Risque Faible';
     }
   };
+
+  const getFilteredEvents = () => {
+    if (!disasterData) return [];
+
+    return disasterData.recentEvents.filter(event => {
+      const countryMatch = selectedCountry === 'all' || event.country.toLowerCase() === selectedCountry.toLowerCase();
+      const typeMatch = selectedType === 'all' || event.type === selectedType;
+
+      // Filtrage par période (pour l'instant, on garde tous les événements récents)
+      const periodMatch = selectedPeriod === 'recent';
+
+      return countryMatch && typeMatch && periodMatch;
+    });
+  };
+
+  const renderFilterButton = (
+    currentValue: string,
+    value: string,
+    label: string,
+    onPress: (value: string) => void
+  ) => (
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        currentValue === value && styles.filterButtonActive
+      ]}
+      onPress={() => onPress(value)}
+    >
+      <Text style={[
+        styles.filterButtonText,
+        currentValue === value && styles.filterButtonTextActive
+      ]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderDisasterCard = ({ item }: { item: DisasterEvent }) => (
+    <TouchableOpacity
+      style={styles.slideCard}
+      onPress={() => onDisasterPress?.(item)}
+      accessible={true}
+      accessibilityLabel={`Catastrophe ${item.type} en ${item.country}`}
+    >
+      <View style={styles.slideHeader}>
+        <View style={styles.slideTypeContainer}>
+          <Text style={styles.slideEmoji}>
+            {climateDataService.getDisasterEmoji(item.type)}
+          </Text>
+          <Text style={styles.slideType}>
+            {item.type === 'drought' ? 'Sécheresse' :
+             item.type === 'flood' ? 'Inondation' :
+             item.type === 'storm' ? 'Tempête' : 'Cyclone'}
+          </Text>
+        </View>
+        <View style={[
+          styles.slideSeverityBadge,
+          { backgroundColor: climateDataService.getSeverityColor(item.severity) + '20' }
+        ]}>
+          <Text style={[
+            styles.slideSeverityText,
+            { color: climateDataService.getSeverityColor(item.severity) }
+          ]}>
+            {item.severity === 'critical' ? 'Critique' :
+             item.severity === 'high' ? 'Élevé' :
+             item.severity === 'medium' ? 'Modéré' : 'Faible'}
+          </Text>
+        </View>
+      </View>
+
+      <Text style={styles.slideLocation}>
+        📍 {item.location}
+      </Text>
+
+      <Text style={styles.slideCountry}>
+        🏴 {item.country}
+      </Text>
+
+      <Text style={styles.slideDate}>
+        📅 {climateDataService.formatDisplayDate(item.date)}
+      </Text>
+
+      <View style={styles.slideStats}>
+        <Text style={styles.slideStatText}>
+          👥 {climateDataService.formatAffectedPeople(item.affectedPeople)}
+        </Text>
+        <Text style={styles.slideStatText}>
+          💰 {climateDataService.formatEconomicLoss(item.economicLoss)}
+        </Text>
+      </View>
+
+      <Text style={styles.slideDescription} numberOfLines={3}>
+        {item.description}
+      </Text>
+    </TouchableOpacity>
+  );
 
   if (loading) {
     return (
@@ -99,72 +198,57 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
         </Text>
       </View>
 
-      {/* Liste des catastrophes récentes */}
+      {/* Filtres */}
+      <View style={styles.filtersContainer}>
+        <Text style={styles.filtersTitle}>Filtrer par :</Text>
+
+        {/* Filtre par pays */}
+        <View style={styles.filterRow}>
+          <Text style={styles.filterLabel}>Pays :</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+            {renderFilterButton(selectedCountry, 'all', 'Tous', setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'benin', 'Bénin', setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'senegal', 'Sénégal', setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'niger', 'Niger', setSelectedCountry)}
+          </ScrollView>
+        </View>
+
+        {/* Filtre par type */}
+        <View style={styles.filterRow}>
+          <Text style={styles.filterLabel}>Type :</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+            {renderFilterButton(selectedType, 'all', 'Tous', setSelectedType)}
+            {renderFilterButton(selectedType, 'drought', 'Sécheresse', setSelectedType)}
+            {renderFilterButton(selectedType, 'flood', 'Inondation', setSelectedType)}
+            {renderFilterButton(selectedType, 'storm', 'Tempête', setSelectedType)}
+          </ScrollView>
+        </View>
+      </View>
+
+      {/* Slides des catastrophes récentes */}
       <View style={styles.disastersList}>
         <Text style={styles.listTitle}>Événements Récents</Text>
-        
-        {disasterData.recentEvents.length === 0 ? (
+
+        {getFilteredEvents().length === 0 ? (
           <View style={styles.noEventsCard}>
-            <Text style={styles.noEventsText}>✅ Aucun événement majeur récent</Text>
-            <Text style={styles.noEventsSubtext}>La région est relativement stable</Text>
+            <Text style={styles.noEventsText}>✅ Aucun événement trouvé</Text>
+            <Text style={styles.noEventsSubtext}>
+              {selectedCountry !== 'all' || selectedType !== 'all'
+                ? 'Essayez de modifier les filtres'
+                : 'La région est relativement stable'}
+            </Text>
           </View>
         ) : (
-          disasterData.recentEvents.map((disaster) => (
-            <TouchableOpacity
-              key={disaster.id}
-              style={styles.disasterCard}
-              onPress={() => onDisasterPress?.(disaster)}
-              accessible={true}
-              accessibilityLabel={`Catastrophe ${disaster.type} en ${disaster.country}`}
-            >
-              <View style={styles.disasterHeader}>
-                <View style={styles.disasterTypeContainer}>
-                  <Text style={styles.disasterEmoji}>
-                    {climateDataService.getDisasterEmoji(disaster.type)}
-                  </Text>
-                  <Text style={styles.disasterType}>
-                    {disaster.type === 'drought' ? 'Sécheresse' :
-                     disaster.type === 'flood' ? 'Inondation' :
-                     disaster.type === 'storm' ? 'Tempête' : 'Cyclone'}
-                  </Text>
-                </View>
-                <View style={[
-                  styles.severityBadge,
-                  { backgroundColor: climateDataService.getSeverityColor(disaster.severity) + '20' }
-                ]}>
-                  <Text style={[
-                    styles.severityText,
-                    { color: climateDataService.getSeverityColor(disaster.severity) }
-                  ]}>
-                    {disaster.severity === 'critical' ? 'Critique' :
-                     disaster.severity === 'high' ? 'Élevé' :
-                     disaster.severity === 'medium' ? 'Modéré' : 'Faible'}
-                  </Text>
-                </View>
-              </View>
-              
-              <Text style={styles.disasterLocation}>
-                📍 {disaster.location}, {disaster.country}
-              </Text>
-              
-              <Text style={styles.disasterDate}>
-                📅 {climateDataService.formatDisplayDate(disaster.date)}
-              </Text>
-              
-              <View style={styles.disasterStats}>
-                <Text style={styles.statText}>
-                  👥 {climateDataService.formatAffectedPeople(disaster.affectedPeople)} personnes
-                </Text>
-                <Text style={styles.statText}>
-                  💰 {climateDataService.formatEconomicLoss(disaster.economicLoss)}
-                </Text>
-              </View>
-              
-              <Text style={styles.disasterDescription} numberOfLines={2}>
-                {disaster.description}
-              </Text>
-            </TouchableOpacity>
-          ))
+          <FlatList
+            data={getFilteredEvents()}
+            renderItem={renderDisasterCard}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={280}
+            decelerationRate="fast"
+            contentContainerStyle={styles.slidesContainer}
+          />
         )}
       </View>
 
@@ -354,5 +438,131 @@ const styles = StyleSheet.create({
     color: COLORS.text.secondary,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  // Styles pour les filtres
+  filtersContainer: {
+    backgroundColor: COLORS.surface,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  filtersTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    marginBottom: 12,
+  },
+  filterRow: {
+    marginBottom: 12,
+  },
+  filterLabel: {
+    fontSize: 12,
+    color: COLORS.text.secondary,
+    marginBottom: 8,
+  },
+  filterScroll: {
+    flexGrow: 0,
+  },
+  filterButton: {
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: COLORS.text.secondary + '30',
+  },
+  filterButtonActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  filterButtonText: {
+    fontSize: 12,
+    color: COLORS.text.secondary,
+    fontWeight: '500',
+  },
+  filterButtonTextActive: {
+    color: COLORS.text.inverse,
+    fontWeight: '600',
+  },
+  // Styles pour les slides
+  slidesContainer: {
+    paddingHorizontal: 8,
+  },
+  slideCard: {
+    backgroundColor: COLORS.surface,
+    width: 260,
+    padding: 16,
+    borderRadius: 12,
+    marginHorizontal: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.warning,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  slideHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  slideTypeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  slideEmoji: {
+    fontSize: 24,
+    marginRight: 8,
+  },
+  slideType: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+  },
+  slideSeverityBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  slideSeverityText: {
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  slideLocation: {
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    marginBottom: 4,
+  },
+  slideCountry: {
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    marginBottom: 4,
+  },
+  slideDate: {
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    marginBottom: 12,
+  },
+  slideStats: {
+    marginBottom: 12,
+  },
+  slideStatText: {
+    fontSize: 12,
+    color: COLORS.text.secondary,
+    marginBottom: 4,
+  },
+  slideDescription: {
+    fontSize: 13,
+    color: COLORS.text.primary,
+    lineHeight: 18,
   },
 });

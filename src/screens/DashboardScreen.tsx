@@ -50,6 +50,14 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
     navigation.navigate('Claims', { emergency: true });
   };
 
+  const handleSubscribeInsurance = () => {
+    navigation.navigate('SubscribeInsurance');
+  };
+
+  const handleReferColleague = () => {
+    navigation.navigate('ReferColleague');
+  };
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -92,6 +100,19 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         <View style={styles.coverageCard}>
           <Text style={styles.cardTitle}>Ma Couverture</Text>
           <View style={styles.coverageDetails}>
+            <View style={styles.coverageItem}>
+              <Text style={styles.coverageLabel}>Culture assurée</Text>
+              <Text style={styles.coverageValue}>
+                {coverage.cropType === 'maize' ? '🌽 Maïs' :
+                 coverage.cropType === 'cotton' ? '🌿 Coton' :
+                 coverage.cropType === 'groundnut' ? '🥜 Arachide' :
+                 coverage.cropType === 'cowpea' ? '🫘 Niébé' :
+                 coverage.cropType === 'rice' ? '🌾 Riz' :
+                 coverage.cropType === 'millet' ? '🌾 Mil' :
+                 coverage.cropType === 'sorghum' ? '🌾 Sorgho' :
+                 `🌱 ${coverage.cropType}`}
+              </Text>
+            </View>
             <View style={styles.coverageItem}>
               <Text style={styles.coverageLabel}>Montant assuré</Text>
               <Text style={styles.coverageValue}>{coverage.amount.toLocaleString()} FCFA</Text>
@@ -154,6 +175,22 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
             onPress={handleEmergencyClaim}
             style={styles.emergencyButton}
             accessibilityHint="Signaler des dégâts sur vos cultures pour indemnisation"
+            accessible={true}
+          />
+
+          <AccessibleButton
+            title="📋 Souscrire à une autre assurance"
+            onPress={handleSubscribeInsurance}
+            style={styles.secondaryButton}
+            accessibilityHint="Ajouter une nouvelle assurance pour d'autres cultures"
+            accessible={true}
+          />
+
+          <AccessibleButton
+            title="👥 Inscrire un collègue"
+            onPress={handleReferColleague}
+            style={styles.tertiaryButton}
+            accessibilityHint="Aider un collègue agriculteur à s'inscrire"
             accessible={true}
           />
         </View>
@@ -268,5 +305,8 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     backgroundColor: COLORS.secondary,
+  },
+  tertiaryButton: {
+    backgroundColor: COLORS.accent,
   },
 });
