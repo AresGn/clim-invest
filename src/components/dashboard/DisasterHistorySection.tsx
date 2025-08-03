@@ -81,6 +81,10 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
         currentValue === value && styles.filterButtonActive
       ]}
       onPress={() => onPress(value)}
+      accessible={true}
+      accessibilityLabel={`Filtre ${label}`}
+      accessibilityHint={`Filtrer par ${label}`}
+      accessibilityRole="button"
     >
       <Text style={[
         styles.filterButtonText,
@@ -458,33 +462,45 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   filterRow: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   filterLabel: {
-    fontSize: 12,
-    color: COLORS.text.secondary,
-    marginBottom: 8,
+    fontSize: 14,
+    color: COLORS.text.primary,
+    marginBottom: 10,
+    fontWeight: '600',
   },
   filterScroll: {
     flexGrow: 0,
+    paddingVertical: 4,
   },
   filterButton: {
     backgroundColor: COLORS.background,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     marginRight: 8,
-    borderWidth: 1,
-    borderColor: COLORS.text.secondary + '30',
+    marginBottom: 8,
+    borderWidth: 1.5,
+    borderColor: COLORS.text.secondary + '40',
+    minWidth: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   filterButtonActive: {
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
+    elevation: 2,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   filterButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
+    textAlign: 'center',
   },
   filterButtonTextActive: {
     color: COLORS.text.inverse,

@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, ActionSheetIOS, Platform } from 'react-native';
-import * as Location from 'expo-location';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../store/slices/authSlice';
 import AccessibleInput from '../components/common/AccessibleInput';
 import AccessibleButton from '../components/common/AccessibleButton';
+import LocationPicker from '../components/common/LocationPicker';
 import { COLORS, CROP_TYPES, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import { validatePhone, validateRegistrationData } from '../utils/validation';
 import { AppDispatch } from '../store/store';
 
 interface RegistrationScreenProps {
@@ -25,188 +26,36 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
   const [errors, setErrors] = useState<any>({});
 
   const validateForm = () => {
-    const newErrors: any = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Le nom est requis';
-    }
-    
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Le numéro de téléphone est requis';
-    } else if (!/^\+226\s?\d{8}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Format: +226 XX XX XX XX';
-    }
-    
-    if (!formData.cropType) {
-      newErrors.cropType = 'Veuillez sélectionner un type de culture';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const validation = validateRegistrationData({
+      name: formData.name,
+      phone: formData.phone,
+      farmSize: formData.farmSize,
+      cropType: formData.cropType,
+      location: formData.location
+    });
 
-  const getCurrentLocation = useCallback(async () => {
-    try {
-      // Request location permissions
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Location Permission Required',
-          'Location access is needed to calculate climate risks for your farm. You can also select your region manually.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Select Manually', onPress: showManualLocationPicker }
-          ]
-        );
-        return;
-      }
-
-      setLoading(true);
-
-      // Get current position with timeout and accuracy settings
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-        timeout: 15000, // 15 seconds timeout
-        maximumAge: 60000 // Accept cached location up to 1 minute old
+    if (!validation.isValid) {
+      const newErrors: any = {};
+      validation.errors.forEach(error => {
+        if (error.includes('nom')) newErrors.name = error;
+        if (error.includes('téléphone')) newErrors.phone = error;
+        if (error.includes('ferme')) newErrors.farmSize = error;
+        if (error.includes('culture')) newErrors.cropType = error;
+        if (error.includes('GPS')) newErrors.location = error;
       });
+      setErrors(newErrors);
 
-      // Get address information
-      let regionName = 'Unknown Region';
-      try {
-        const address = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude
-        });
-
-        regionName = address[0]?.region ||
-                    address[0]?.city ||
-                    address[0]?.district ||
-                    address[0]?.subregion ||
-                    'Unknown Region';
-      } catch (geocodeError) {
-        console.warn('Geocoding failed, using coordinates only:', geocodeError);
-        // Determine region based on coordinates for Benin
-        regionName = getBeninRegionFromCoordinates(location.coords.latitude, location.coords.longitude);
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        location: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          region: regionName
-        }
-      }));
-
-      Alert.alert('Success', `Location obtained: ${regionName}`);
-
-    } catch (error: any) {
-      console.error('Location error:', error);
-
-      let errorMessage = 'Unable to get your location. ';
-      let showManualOption = true;
-
-      if (error.code === 'E_LOCATION_TIMEOUT') {
-        errorMessage += 'Location request timed out. Please try again or select your region manually.';
-      } else if (error.code === 'E_LOCATION_UNAVAILABLE') {
-        errorMessage += 'Location services are unavailable. Please enable GPS and try again.';
-      } else if (error.code === 'E_LOCATION_SETTINGS_UNSATISFIED') {
-        errorMessage += 'Location settings need to be adjusted. Please check your GPS settings.';
-      } else {
-        errorMessage += 'Please try again or select your region manually.';
-      }
-
-      Alert.alert(
-        'Location Error',
-        errorMessage,
-        [
-          { text: 'Try Again', onPress: getCurrentLocation },
-          { text: 'Select Manually', onPress: showManualLocationPicker }
-        ]
-      );
-    } finally {
-      setLoading(false);
+      // Afficher le premier message d'erreur
+      Alert.alert('Erreur de validation', validation.errors[0]);
+      return false;
     }
-  }, []);
 
-  // Determine Benin region from coordinates
-  const getBeninRegionFromCoordinates = (lat: number, lon: number): string => {
-    // Approximate regions of Benin based on coordinates
-    if (lat >= 11.5) return 'Alibori';
-    if (lat >= 10.5) return 'Borgou';
-    if (lat >= 9.5) return 'Atacora';
-    if (lat >= 8.5) return 'Donga';
-    if (lat >= 7.5) return 'Collines';
-    if (lat >= 6.5) return 'Zou';
-    if (lat >= 6.0) return 'Plateau';
-    return 'Littoral';
+    setErrors({});
+    return true;
   };
 
-  // Manual location picker
-  const showManualLocationPicker = useCallback(() => {
-    const beninRegions = [
-      'Alibori', 'Atacora', 'Atlantique', 'Borgou', 'Collines',
-      'Couffo', 'Donga', 'Littoral', 'Mono', 'Ouémé', 'Plateau', 'Zou'
-    ];
 
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Cancel', ...beninRegions],
-          cancelButtonIndex: 0,
-          title: 'Select your region'
-        },
-        (buttonIndex) => {
-          if (buttonIndex > 0) {
-            const selectedRegion = beninRegions[buttonIndex - 1];
-            setManualLocation(selectedRegion);
-          }
-        }
-      );
-    } else {
-      // For Android, show alert with options
-      Alert.alert(
-        'Select Your Region',
-        'Choose the region where your farm is located:',
-        beninRegions.map(region => ({
-          text: region,
-          onPress: () => setManualLocation(region)
-        })).concat([{ text: 'Cancel', style: 'cancel' }])
-      );
-    }
-  }, []);
 
-  // Set manual location with approximate coordinates
-  const setManualLocation = (region: string) => {
-    // Approximate coordinates for each region in Benin
-    const regionCoordinates: { [key: string]: { lat: number, lon: number } } = {
-      'Alibori': { lat: 11.8, lon: 2.8 },
-      'Atacora': { lat: 10.5, lon: 1.5 },
-      'Atlantique': { lat: 6.5, lon: 2.0 },
-      'Borgou': { lat: 9.8, lon: 2.6 },
-      'Collines': { lat: 8.0, lon: 2.3 },
-      'Couffo': { lat: 7.0, lon: 1.8 },
-      'Donga': { lat: 9.0, lon: 1.8 },
-      'Littoral': { lat: 6.4, lon: 2.3 },
-      'Mono': { lat: 6.8, lon: 1.6 },
-      'Ouémé': { lat: 6.7, lon: 2.6 },
-      'Plateau': { lat: 7.2, lon: 2.7 },
-      'Zou': { lat: 7.2, lon: 2.2 }
-    };
-
-    const coords = regionCoordinates[region] || { lat: 6.4, lon: 2.3 }; // Default to Cotonou
-
-    setFormData(prev => ({
-      ...prev,
-      location: {
-        latitude: coords.lat,
-        longitude: coords.lon,
-        region: region
-      }
-    }));
-
-    Alert.alert('Location Set', `Your region has been set to ${region}`);
-  };
 
   const handleRegistration = useCallback(async () => {
     if (!validateForm()) {
@@ -221,7 +70,8 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
     setLoading(true);
     try {
       await dispatch(registerUser(formData));
-      navigation.navigate('Dashboard');
+      // Navigation will be handled automatically by AppNavigator when isAuthenticated becomes true
+      // No need to manually navigate - Redux state change will trigger navigation
     } catch (error) {
       Alert.alert('Erreur', 'Échec de l\'inscription. Veuillez réessayer.');
     } finally {
@@ -270,33 +120,11 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
         error={errors.phone}
       />
 
-      <View style={styles.locationSection}>
-        <Text style={styles.sectionTitle}>Localisation de votre exploitation</Text>
-        {formData.location ? (
-          <View style={styles.locationDisplay}>
-            <Text 
-              style={styles.locationText}
-              accessibilityLabel={`Localisation actuelle : ${formData.location.region}`}
-            >
-              📍 {formData.location.region}
-            </Text>
-            <AccessibleButton
-              title="Modifier"
-              onPress={getCurrentLocation}
-              style={styles.modifyButton}
-              accessibilityHint="Modifier votre localisation"
-            />
-          </View>
-        ) : (
-          <AccessibleButton
-            title="📍 Obtenir ma position GPS"
-            onPress={getCurrentLocation}
-            loading={loading}
-            accessibilityHint="Utilise le GPS pour déterminer votre zone climatique"
-            style={styles.locationButton}
-          />
-        )}
-      </View>
+      <LocationPicker
+        currentLocation={formData.location}
+        onLocationSelected={(location) => setFormData(prev => ({ ...prev, location }))}
+        style={styles.locationSection}
+      />
 
       <View style={styles.cropSection}>
         <Text style={styles.sectionTitle}>Type de culture principale</Text>
