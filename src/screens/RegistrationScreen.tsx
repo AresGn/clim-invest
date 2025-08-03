@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, ActionSheetIOS, Platform } from 'react-native';
 import * as Location from 'expo-location';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../store/slices/authSlice';
@@ -47,33 +47,166 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
 
   const getCurrentLocation = useCallback(async () => {
     try {
+      // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission refusée', 'Autorisation de localisation requise pour calculer les risques climatiques');
+        Alert.alert(
+          'Location Permission Required',
+          'Location access is needed to calculate climate risks for your farm. You can also select your region manually.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Select Manually', onPress: showManualLocationPicker }
+          ]
+        );
         return;
       }
 
       setLoading(true);
-      const location = await Location.getCurrentPositionAsync({});
-      const address = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude
+
+      // Get current position with timeout and accuracy settings
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+        timeout: 15000, // 15 seconds timeout
+        maximumAge: 60000 // Accept cached location up to 1 minute old
       });
+
+      // Get address information
+      let regionName = 'Unknown Region';
+      try {
+        const address = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        });
+
+        regionName = address[0]?.region ||
+                    address[0]?.city ||
+                    address[0]?.district ||
+                    address[0]?.subregion ||
+                    'Unknown Region';
+      } catch (geocodeError) {
+        console.warn('Geocoding failed, using coordinates only:', geocodeError);
+        // Determine region based on coordinates for Benin
+        regionName = getBeninRegionFromCoordinates(location.coords.latitude, location.coords.longitude);
+      }
 
       setFormData(prev => ({
         ...prev,
         location: {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          region: address[0]?.region || 'Région inconnue'
+          region: regionName
         }
       }));
-    } catch (error) {
-      Alert.alert('Erreur', 'Impossible d\'obtenir votre localisation');
+
+      Alert.alert('Success', `Location obtained: ${regionName}`);
+
+    } catch (error: any) {
+      console.error('Location error:', error);
+
+      let errorMessage = 'Unable to get your location. ';
+      let showManualOption = true;
+
+      if (error.code === 'E_LOCATION_TIMEOUT') {
+        errorMessage += 'Location request timed out. Please try again or select your region manually.';
+      } else if (error.code === 'E_LOCATION_UNAVAILABLE') {
+        errorMessage += 'Location services are unavailable. Please enable GPS and try again.';
+      } else if (error.code === 'E_LOCATION_SETTINGS_UNSATISFIED') {
+        errorMessage += 'Location settings need to be adjusted. Please check your GPS settings.';
+      } else {
+        errorMessage += 'Please try again or select your region manually.';
+      }
+
+      Alert.alert(
+        'Location Error',
+        errorMessage,
+        [
+          { text: 'Try Again', onPress: getCurrentLocation },
+          { text: 'Select Manually', onPress: showManualLocationPicker }
+        ]
+      );
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Determine Benin region from coordinates
+  const getBeninRegionFromCoordinates = (lat: number, lon: number): string => {
+    // Approximate regions of Benin based on coordinates
+    if (lat >= 11.5) return 'Alibori';
+    if (lat >= 10.5) return 'Borgou';
+    if (lat >= 9.5) return 'Atacora';
+    if (lat >= 8.5) return 'Donga';
+    if (lat >= 7.5) return 'Collines';
+    if (lat >= 6.5) return 'Zou';
+    if (lat >= 6.0) return 'Plateau';
+    return 'Littoral';
+  };
+
+  // Manual location picker
+  const showManualLocationPicker = useCallback(() => {
+    const beninRegions = [
+      'Alibori', 'Atacora', 'Atlantique', 'Borgou', 'Collines',
+      'Couffo', 'Donga', 'Littoral', 'Mono', 'Ouémé', 'Plateau', 'Zou'
+    ];
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', ...beninRegions],
+          cancelButtonIndex: 0,
+          title: 'Select your region'
+        },
+        (buttonIndex) => {
+          if (buttonIndex > 0) {
+            const selectedRegion = beninRegions[buttonIndex - 1];
+            setManualLocation(selectedRegion);
+          }
+        }
+      );
+    } else {
+      // For Android, show alert with options
+      Alert.alert(
+        'Select Your Region',
+        'Choose the region where your farm is located:',
+        beninRegions.map(region => ({
+          text: region,
+          onPress: () => setManualLocation(region)
+        })).concat([{ text: 'Cancel', style: 'cancel' }])
+      );
+    }
+  }, []);
+
+  // Set manual location with approximate coordinates
+  const setManualLocation = (region: string) => {
+    // Approximate coordinates for each region in Benin
+    const regionCoordinates: { [key: string]: { lat: number, lon: number } } = {
+      'Alibori': { lat: 11.8, lon: 2.8 },
+      'Atacora': { lat: 10.5, lon: 1.5 },
+      'Atlantique': { lat: 6.5, lon: 2.0 },
+      'Borgou': { lat: 9.8, lon: 2.6 },
+      'Collines': { lat: 8.0, lon: 2.3 },
+      'Couffo': { lat: 7.0, lon: 1.8 },
+      'Donga': { lat: 9.0, lon: 1.8 },
+      'Littoral': { lat: 6.4, lon: 2.3 },
+      'Mono': { lat: 6.8, lon: 1.6 },
+      'Ouémé': { lat: 6.7, lon: 2.6 },
+      'Plateau': { lat: 7.2, lon: 2.7 },
+      'Zou': { lat: 7.2, lon: 2.2 }
+    };
+
+    const coords = regionCoordinates[region] || { lat: 6.4, lon: 2.3 }; // Default to Cotonou
+
+    setFormData(prev => ({
+      ...prev,
+      location: {
+        latitude: coords.lat,
+        longitude: coords.lon,
+        region: region
+      }
+    }));
+
+    Alert.alert('Location Set', `Your region has been set to ${region}`);
+  };
 
   const handleRegistration = useCallback(async () => {
     if (!validateForm()) {

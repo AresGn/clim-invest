@@ -13,13 +13,101 @@ interface DashboardScreenProps {
   navigation: any;
 }
 
+// Helper function to extract weather values from different data sources
+const getWeatherValue = (weatherData: any, type: string): string => {
+  if (!weatherData) return '--';
+
+  // Handle OpenWeatherMap data structure
+  if (weatherData.source === 'OpenWeatherMap' && weatherData.current) {
+    switch (type) {
+      case 'temperature':
+        return weatherData.current.temperature?.toFixed(1) || '--';
+      case 'humidity':
+        return weatherData.current.humidity?.toFixed(0) || '--';
+      case 'precipitation':
+        return '0.0'; // Current weather doesn't include precipitation
+      case 'wind_speed':
+        return weatherData.current.wind_speed?.toFixed(1) || '--';
+      default:
+        return '--';
+    }
+  }
+
+  // Handle NASA POWER data structure
+  if (weatherData.source === 'NASA_POWER' && weatherData.sample_data) {
+    switch (type) {
+      case 'temperature':
+        return weatherData.sample_data.T2M?.value?.toFixed(1) || '--';
+      case 'humidity':
+        return weatherData.sample_data.RH2M?.value?.toFixed(0) || '--';
+      case 'precipitation':
+        return weatherData.sample_data.PRECTOTCORR?.value?.toFixed(1) || '--';
+      case 'wind_speed':
+        return weatherData.sample_data.WS10M?.value?.toFixed(1) || '--';
+      default:
+        return '--';
+    }
+  }
+
+  // Handle simulated data structure
+  if (weatherData.source === 'SIMULATED' && weatherData.current) {
+    switch (type) {
+      case 'temperature':
+        return weatherData.current.temperature?.toFixed(1) || '--';
+      case 'humidity':
+        return weatherData.current.humidity?.toFixed(0) || '--';
+      case 'precipitation':
+        return '0.0'; // Simulated current weather
+      case 'wind_speed':
+        return weatherData.current.wind_speed?.toFixed(1) || '--';
+      default:
+        return '--';
+    }
+  }
+
+  // Fallback for any other structure
+  return '--';
+};
+
+// Helper functions for risk analysis display
+const getRiskLevelDisplay = (level: string): string => {
+  switch (level) {
+    case 'high': return '🔴 High';
+    case 'medium': return '🟡 Medium';
+    case 'low': return '🟢 Low';
+    default: return '⚪ Unknown';
+  }
+};
+
+const getRiskIcon = (type: string): string => {
+  switch (type) {
+    case 'drought': return '🌵';
+    case 'heat_stress': return '🔥';
+    case 'fungal_disease': return '🍄';
+    case 'flood': return '🌊';
+    case 'pest': return '🐛';
+    default: return '⚠️';
+  }
+};
+
+const getRiskTypeDisplay = (type: string): string => {
+  switch (type) {
+    case 'drought': return 'Drought Risk';
+    case 'heat_stress': return 'Heat Stress';
+    case 'fungal_disease': return 'Fungal Disease';
+    case 'flood': return 'Flood Risk';
+    case 'pest': return 'Pest Risk';
+    default: return 'Unknown Risk';
+  }
+};
+
 export default function DashboardScreen({ navigation }: DashboardScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const { coverage, loading } = useSelector((state: RootState) => state.insurance);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Utilisation du nouveau hook météo robuste
+  // Using updated weather hook with hybrid service
   const { weatherData, riskAnalysis, loading: weatherLoading, error: weatherError, refetch } = useWeatherData(
     user?.location.latitude,
     user?.location.longitude
@@ -137,32 +225,87 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         cycleDays={30} // Cycle de 30 jours
       />
 
-      {/* Données météo actuelles */}
+      {/* Current weather data - updated for hybrid service */}
       {weatherData && (
         <View style={styles.weatherSection}>
-          <Text style={styles.sectionTitle}>🌤️ Météo</Text>
+          <Text style={styles.sectionTitle}>🌤️ Weather</Text>
           <View style={styles.weatherCard}>
             <View style={styles.weatherRow}>
-              <Text style={styles.weatherLabel}>🌡️ Température</Text>
-              <Text style={styles.weatherValue}>{weatherData.current.temperature_2m?.toFixed(1) || '--'}°C</Text>
+              <Text style={styles.weatherLabel}>🌡️ Temperature</Text>
+              <Text style={styles.weatherValue}>
+                {getWeatherValue(weatherData, 'temperature')}°C
+              </Text>
             </View>
             <View style={styles.weatherRow}>
-              <Text style={styles.weatherLabel}>💧 Humidité</Text>
-              <Text style={styles.weatherValue}>{weatherData.current.relative_humidity_2m?.toFixed(0) || '--'}%</Text>
+              <Text style={styles.weatherLabel}>💧 Humidity</Text>
+              <Text style={styles.weatherValue}>
+                {getWeatherValue(weatherData, 'humidity')}%
+              </Text>
             </View>
             <View style={styles.weatherRow}>
-              <Text style={styles.weatherLabel}>🌧️ Pluie</Text>
-              <Text style={styles.weatherValue}>{weatherData.current.precipitation?.toFixed(1) || '--'} mm</Text>
+              <Text style={styles.weatherLabel}>🌧️ Precipitation</Text>
+              <Text style={styles.weatherValue}>
+                {getWeatherValue(weatherData, 'precipitation')} mm
+              </Text>
             </View>
             <View style={styles.weatherRow}>
-              <Text style={styles.weatherLabel}>💨 Vent</Text>
-              <Text style={styles.weatherValue}>{weatherData.current.wind_speed_10m?.toFixed(1) || '--'} km/h</Text>
+              <Text style={styles.weatherLabel}>💨 Wind</Text>
+              <Text style={styles.weatherValue}>
+                {getWeatherValue(weatherData, 'wind_speed')} km/h
+              </Text>
+            </View>
+            <View style={styles.weatherRow}>
+              <Text style={styles.weatherLabel}>📊 Source</Text>
+              <Text style={[styles.weatherValue, { fontSize: 12 }]}>
+                {weatherData.source || 'Hybrid Service'}
+              </Text>
             </View>
           </View>
         </View>
       )}
 
-      {/* Historique des catastrophes récentes */}
+      {/* Climate risk analysis - updated for hybrid service */}
+      {riskAnalysis && (
+        <View style={styles.riskSection}>
+          <Text style={styles.sectionTitle}>⚠️ Risk Analysis</Text>
+          <View style={styles.riskCard}>
+            <View style={styles.riskHeader}>
+              <Text style={styles.riskLevel}>
+                Overall Risk: {getRiskLevelDisplay(riskAnalysis.overall_risk)}
+              </Text>
+              <Text style={styles.riskScore}>
+                Score: {riskAnalysis.risk_score || 0}/100
+              </Text>
+            </View>
+
+            {riskAnalysis.risks && riskAnalysis.risks.length > 0 && (
+              <View style={styles.risksList}>
+                {riskAnalysis.risks.slice(0, 3).map((risk: any, index: number) => (
+                  <View key={index} style={styles.riskItem}>
+                    <Text style={styles.riskType}>
+                      {getRiskIcon(risk.type)} {getRiskTypeDisplay(risk.type)}
+                    </Text>
+                    <Text style={styles.riskProbability}>
+                      {risk.probability}% probability
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {riskAnalysis.recommendations && riskAnalysis.recommendations.length > 0 && (
+              <View style={styles.recommendationsSection}>
+                <Text style={styles.recommendationsTitle}>💡 Recommendations:</Text>
+                <Text style={styles.recommendationText}>
+                  {riskAnalysis.recommendations[0]}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
+
+      {/* Recent disaster history */}
       <DisasterHistorySection />
 
       {/* Action principale */}
@@ -308,5 +451,70 @@ const styles = StyleSheet.create({
   },
   tertiaryButton: {
     backgroundColor: COLORS.accent,
+  },
+  // Risk analysis styles
+  riskSection: {
+    margin: 16,
+  },
+  riskCard: {
+    backgroundColor: COLORS.surface,
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  riskHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  riskLevel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+  },
+  riskScore: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: COLORS.text.secondary,
+  },
+  risksList: {
+    marginBottom: 12,
+  },
+  riskItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  riskType: {
+    fontSize: 14,
+    color: COLORS.text.primary,
+    flex: 1,
+  },
+  riskProbability: {
+    fontSize: 12,
+    color: COLORS.text.secondary,
+    fontWeight: '500',
+  },
+  recommendationsSection: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.background,
+    paddingTop: 12,
+  },
+  recommendationsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  recommendationText: {
+    fontSize: 13,
+    color: COLORS.text.secondary,
+    lineHeight: 18,
   },
 });
