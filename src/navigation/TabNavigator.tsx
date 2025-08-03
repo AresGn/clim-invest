@@ -13,7 +13,7 @@ import HistoryScreen from '../screens/HistoryScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ClaimsScreen from '../screens/ClaimsScreen';
-import WeatherTestScreen from '../screens/WeatherTestScreen';
+
 import SubscribeInsuranceScreen from '../screens/SubscribeInsuranceScreen';
 import ReferColleagueScreen from '../screens/ReferColleagueScreen';
 import InsightsScreen from '../screens/InsightsScreen';
@@ -23,7 +23,7 @@ import DetailedAnalyticsScreen from '../screens/DetailedAnalyticsScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Stack pour le Dashboard (inclut les écrans secondaires)
+// Dashboard stack - includes main app features and secondary screens
 function DashboardStack() {
   return (
     <Stack.Navigator
@@ -35,14 +35,14 @@ function DashboardStack() {
     >
       <Stack.Screen name="DashboardMain" component={DashboardScreen} />
       <Stack.Screen name="Claims" component={ClaimsScreen} />
-      <Stack.Screen name="WeatherTest" component={WeatherTestScreen} />
+
       <Stack.Screen name="SubscribeInsurance" component={SubscribeInsuranceScreen} />
       <Stack.Screen name="ReferColleague" component={ReferColleagueScreen} />
     </Stack.Navigator>
   );
 }
 
-// Stack pour les Analyses
+// Insights stack - OpenEPI analytics, credit scoring, and detailed analysis
 function InsightsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -53,32 +53,31 @@ function InsightsStack() {
   );
 }
 
-// Stack pour les Paramètres
+// Settings stack - clean and focused
 function SettingsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SettingsMain" component={SettingsScreen} />
-      <Stack.Screen name="WeatherTest" component={WeatherTestScreen} />
     </Stack.Navigator>
   );
 }
 
-// Composant d'icône personnalisé avec badges
+// Custom icon component with badges - consistent icons for better UX
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons = {
-    Dashboard: focused ? '🏡' : '🏠',
-    History: focused ? '📈' : '📊',
-    Insights: focused ? '🔍' : '🧠',
-    Payments: focused ? '💳' : '💰',
-    Settings: focused ? '⚙️' : '🔧'
+    Dashboard: '🏠', // Always home icon
+    History: '📊', // Always chart icon
+    Insights: '🔍', // Always search/analysis icon
+    Payments: '💳', // Always card icon
+    Settings: '⚙️' // Always settings icon
   };
 
-  // Simulation de notifications (à remplacer par de vraies données)
+  // Notification simulation (replace with real data in production)
   const notificationCounts = {
-    Dashboard: 2, // Alertes météo
+    Dashboard: 2, // Weather alerts
     History: 0,
-    Insights: 1, // Nouvelles analyses disponibles
-    Payments: 1, // Paiement en attente
+    Insights: 1, // New analysis available
+    Payments: 1, // Pending payment
     Settings: 0
   };
 

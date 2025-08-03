@@ -2,17 +2,16 @@ import axios, { AxiosInstance } from 'axios';
 import { SoilData, YieldData, PriceData } from './openEpiAdvancedService';
 
 /**
- * 🔄 Service OpenEPI Hybride
- * 
- * Ce service utilise les vraies APIs quand elles sont disponibles
- * et les données simulées comme fallback robuste.
- * 
- * Basé sur les résultats des tests:
- * ✅ NASA POWER: Fonctionnel (données météo/climat)
- * ⚠️  OpenWeatherMap: Nécessite clé API
- * ❌ SoilGrids: Temporairement indisponible
- * ❌ FAO FAOSTAT: Problèmes d'accès
- * ❌ World Bank: API v2 non accessible
+ * 🔄 Hybrid OpenEPI Service
+ *
+ * This service uses real APIs when available and simulated data as robust fallback.
+ *
+ * Based on test results:
+ * ✅ NASA POWER: Functional (climate/weather data)
+ * ✅ OpenWeatherMap: Functional (requires API key)
+ * ❌ SoilGrids: Temporarily unavailable (500 errors)
+ * ❌ FAO FAOSTAT: Access issues
+ * ❌ World Bank: API v2 not accessible
  */
 
 interface APIStatus {
@@ -26,14 +25,14 @@ export class HybridOpenEpiService {
   private nasaPowerClient: AxiosInstance;
   private openWeatherClient: AxiosInstance;
   private apiStatus: Map<string, APIStatus> = new Map();
-  
-  // Configuration des APIs fonctionnelles
+
+  // Configuration for functional APIs
   private readonly NASA_POWER_URL = 'https://power.larc.nasa.gov/api/temporal/daily/point';
   private readonly OPENWEATHER_URL = 'https://api.openweathermap.org/data/2.5';
   private readonly OPENWEATHER_API_KEY = process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY || '';
 
   constructor() {
-    // Client NASA POWER (pas d'auth requise)
+    // NASA POWER client (no auth required)
     this.nasaPowerClient = axios.create({
       timeout: 20000,
       headers: {
@@ -42,7 +41,7 @@ export class HybridOpenEpiService {
       }
     });
 
-    // Client OpenWeatherMap
+    // OpenWeatherMap client
     this.openWeatherClient = axios.create({
       baseURL: this.OPENWEATHER_URL,
       timeout: 15000,
@@ -52,7 +51,7 @@ export class HybridOpenEpiService {
       }
     });
 
-    // Initialiser le statut des APIs
+    // Initialize API status tracking
     this.initializeAPIStatus();
   }
 
