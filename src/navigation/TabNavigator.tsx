@@ -2,9 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+
 import { COLORS } from '../utils/constants';
-import FloatingActionButton from '../components/common/FloatingActionButton';
+
 import TabBadge from '../components/common/TabBadge';
 
 // Screens
@@ -21,7 +21,13 @@ const Stack = createNativeStackNavigator();
 // Stack pour le Dashboard (inclut les écrans secondaires)
 function DashboardStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        gestureEnabled: true,
+        animation: 'slide_from_right'
+      }}
+    >
       <Stack.Screen name="DashboardMain" component={DashboardScreen} />
       <Stack.Screen name="Claims" component={ClaimsScreen} />
       <Stack.Screen name="WeatherTest" component={WeatherTestScreen} />
@@ -77,19 +83,9 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
 }
 
 export default function TabNavigator() {
-  const navigation = useNavigation();
-
-  const handleEmergencyClaim = () => {
-    // @ts-ignore - Navigation vers l'écran de réclamation d'urgence
-    navigation.navigate('Dashboard', {
-      screen: 'Claims',
-      params: { emergency: true }
-    });
-  };
 
   return (
-    <>
-      <Tab.Navigator
+    <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused }) => (
@@ -156,14 +152,5 @@ export default function TabNavigator() {
         }}
       />
     </Tab.Navigator>
-
-    {/* Bouton flottant pour réclamations d'urgence */}
-    <FloatingActionButton
-      onPress={handleEmergencyClaim}
-      title="🚨"
-      accessibilityLabel="Réclamation d'urgence"
-      accessibilityHint="Déclarer un sinistre en urgence"
-    />
-  </>
   );
 }

@@ -110,6 +110,17 @@ class WeatherValidationService {
 
   private async getOpenMeteoData(lat: number, lon: number, date: string) {
     try {
+      // Vérifier que la date n'est pas dans le futur
+      const targetDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (targetDate > today) {
+        console.warn('⚠️ Date dans le futur, utilisation des prévisions');
+        const forecast = await openMeteoService.getForecast(lat, lon, 1);
+        return forecast;
+      }
+
       return await openMeteoService.getHistoricalWeather(lat, lon, date, date);
     } catch (error) {
       console.warn('⚠️ Données Open-Meteo non disponibles:', error);

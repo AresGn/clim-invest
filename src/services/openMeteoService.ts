@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { ENV_CONFIG } from '../config/env';
+import { DateUtils } from '../utils/dateUtils';
 
 export interface OpenMeteoCurrentWeather {
   current: {
@@ -51,10 +52,17 @@ class OpenMeteoService {
 
   async getCurrentWeather(lat: number, lon: number): Promise<OpenMeteoCurrentWeather> {
     try {
+      // Validation des coordonnées
+      if (!DateUtils.validateCoordinates(lat, lon)) {
+        throw new Error('Coordonnées GPS invalides');
+      }
+
+      const { lat: roundedLat, lon: roundedLon } = DateUtils.roundCoordinates(lat, lon);
+
       const response = await this.client.get('/forecast', {
         params: {
-          latitude: lat,
-          longitude: lon,
+          latitude: roundedLat,
+          longitude: roundedLon,
           current: [
             'temperature_2m',
             'relative_humidity_2m',
@@ -75,10 +83,21 @@ class OpenMeteoService {
 
   async getForecast(lat: number, lon: number, days: number = 7): Promise<OpenMeteoForecast> {
     try {
+      // Validation des paramètres
+      if (!DateUtils.validateCoordinates(lat, lon)) {
+        throw new Error('Coordonnées GPS invalides');
+      }
+
+      if (days < 1 || days > 16) {
+        days = 7; // Valeur par défaut sécurisée
+      }
+
+      const { lat: roundedLat, lon: roundedLon } = DateUtils.roundCoordinates(lat, lon);
+
       const response = await this.client.get('/forecast', {
         params: {
-          latitude: lat,
-          longitude: lon,
+          latitude: roundedLat,
+          longitude: roundedLon,
           daily: [
             'temperature_2m_max',
             'temperature_2m_min',
@@ -99,18 +118,36 @@ class OpenMeteoService {
   }
 
   async getHistoricalWeather(
-    lat: number, 
-    lon: number, 
-    startDate: string, 
+    lat: number,
+    lon: number,
+    startDate: string,
     endDate: string
   ): Promise<OpenMeteoHistorical> {
     try {
+      // Validation des coordonnées
+      if (!DateUtils.validateCoordinates(lat, lon)) {
+        throw new Error('Coordonnées GPS invalides');
+      }
+
+      // Obtenir une plage de dates sécurisée
+      const { startDate: safeStartDate, endDate: safeEndDate, isAdjusted } =
+        DateUtils.getSafeHistoricalDateRange(startDate, endDate);
+
+      if (isAdjusted) {
+        console.warn('⚠️ Dates ajustées pour compatibilité API:', {
+          original: { startDate, endDate },
+          adjusted: { startDate: safeStartDate, endDate: safeEndDate }
+        });
+      }
+
+      const { lat: roundedLat, lon: roundedLon } = DateUtils.roundCoordinates(lat, lon);
+
       const response = await this.archiveClient.get('/archive', {
         params: {
-          latitude: lat,
-          longitude: lon,
-          start_date: startDate,
-          end_date: endDate,
+          latitude: roundedLat,
+          longitude: roundedLon,
+          start_date: safeStartDate,
+          end_date: safeEndDate,
           daily: [
             'temperature_2m_max',
             'temperature_2m_min',
