@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
-import { openEpiAdvancedService, SoilData, YieldData, PriceData } from '../services/openEpiAdvancedService';
+import { hybridOpenEpiService } from '../services/hybridOpenEpiService';
+import { SoilData, YieldData, PriceData } from '../services/openEpiAdvancedService';
 import { creditScoringService, FarmerCreditScore } from '../services/creditScoringService';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
@@ -33,11 +34,11 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
     try {
       setError(null);
       
-      // Charger toutes les données en parallèle
+      // Charger toutes les données en parallèle avec le service hybride
       const [soil, yields, prices, credit] = await Promise.all([
-        openEpiAdvancedService.getSoilData(user.location.latitude, user.location.longitude),
-        openEpiAdvancedService.getCropYields('Benin', user.cropType || 'maize'),
-        openEpiAdvancedService.getCropPrices(user.cropType || 'maize', 'Cotonou'),
+        hybridOpenEpiService.getSoilData(user.location.latitude, user.location.longitude),
+        hybridOpenEpiService.getCropYields('Benin', user.cropType || 'maize'),
+        hybridOpenEpiService.getCropPrices(user.cropType || 'maize', 'Cotonou'),
         creditScoringService.calculateCreditScore(
           user.id,
           { lat: user.location.latitude, lon: user.location.longitude },
