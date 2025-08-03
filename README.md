@@ -1,6 +1,10 @@
 # ClimInvest - Micro-Assurance Climatique par SMS
 
-## Révolutionner l'Assurance Agricole en Afrique de l'Ouest
+<div align="center">
+  <img src="assets/icon.png" alt="ClimInvest Logo" width="120" height="120">
+
+  ## Révolutionner l'Assurance Agricole en Afrique de l'Ouest
+</div>
 
 [![OpenEPI Hackathon 2025](https://img.shields.io/badge/OpenEPI-Hackathon%202025-blue)](https://developer.openepi.io/hackathon-2025)
 [![SDG](https://img.shields.io/badge/SDG-2%20Zero%20Hunger-green)](https://sdgs.un.org/goals/goal2)
@@ -10,6 +14,19 @@
 ## Aperçu du Projet
 
 ClimInvest est une application mobile révolutionnaire qui démocratise l'accès à l'assurance agricole en Afrique de l'Ouest. Utilisant une approche mobile-first avec intégration SMS et appels téléphoniques, l'application offre une micro-assurance climatique accessible à tous les agriculteurs, même ceux sans smartphone.
+
+## 🎥 Démonstration Vidéo
+
+<div align="center">
+  <video width="600" controls>
+    <source src="https://res.cloudinary.com/dtwx8br7o/video/upload/v1753450192/2025-07-25_14-23-56_xv9mqb.mp4" type="video/mp4">
+    Votre navigateur ne supporte pas la lecture vidéo.
+  </video>
+</div>
+
+> **Découvrez ClimInvest en action** : souscription par SMS, déclenchement automatique des indemnisations, onglet Analyses avec scoring de crédit, et toutes les fonctionnalités d'accessibilité.
+
+*[Cliquez sur la vidéo pour voir la démonstration complète de l'application]*
 
 ### Problématique Adressée
 
@@ -95,6 +112,38 @@ L'onglet **Analyses** fournit des services avancés basés sur les retours utili
 - **Algorithmes de détection avancés** pour les événements climatiques
 - **Intégration transparente** avec les systèmes de paiement mobile
 - **Réduction des coûts** grâce à l'automatisation
+
+## Avantages Compétitifs vs Assurance Traditionnelle
+
+| **Critère** | **Clim-Invest** | **Assurance Classique** |
+|-------------|-----------------|-------------------------|
+| **Coût mensuel** | 200-1 000 FCFA | 5 000-20 000 FCFA |
+| **Délai d'indemnisation** | 24-72h automatique | 3-6 mois (expertise) |
+| **Accessibilité** | Mobile money + analphabètes | Bureau + compte bancaire |
+| **Couverture géographique** | Zones reculées via satellite | Centres urbains uniquement |
+| **Prérequis** | Téléphone basique | Smartphone + internet |
+
+## Fondations Technologiques Éprouvées
+
+Les données satellites sont accessibles via Digital Earth Africa, qui fournit des images historiques depuis 1984 couvrant tout le continent africain. Le système NDVI permet de détecter le stress des cultures jusqu'à **2 semaines avant détection visuelle**, tandis que Sentinel-1 offre une précision **>95% pour la détection d'inondations**.
+
+Les infrastructures AGRHYMET garantissent l'accès aux données météorologiques en temps réel pour les 15 pays de la CEDEAO, avec des stations météo automatisées et des modèles de prévision saisonnière Next Generation.
+
+## Modèle Économique Durable
+
+- **80%** des primes → Fonds d'indemnisation
+- **15%** → Coûts techniques (données, SMS, plateforme)
+- **5%** → Croissance et réserves
+
+**Seuil de rentabilité** : 50,000 assurés avec un fonds de réserve gouvernemental de 10% des primes pour les catastrophes majeures.
+
+## Enseignements Internationaux
+
+**Kenya (Kilimo Salama)** : Lancé en 2009 avec 200 agriculteurs, le programme a atteint 51,000 assurés au Kenya et 14,000 au Rwanda. Les revenus de primes sont passés de 19 millions KSh en 2011 à 33 millions KSh en 6 mois en 2012.
+
+**Inde (PMFBY)** : Le programme gouvernemental couvre 194 millions d'agriculteurs avec des subventions de 50% des primes. Les primes varient de 1,5% à 5% des sommes assurées selon les cultures.
+
+Ces succès démontrent la viabilité de l'assurance indicielle à grande échelle avec un soutien public approprié.
 
 ## Impact Projeté
 
