@@ -383,5 +383,69 @@ const styles = StyleSheet.create({
   tertiaryButton: {
     backgroundColor: COLORS.accent,
   },
-
+  // Risk analysis styles
+  riskSection: {
+    margin: 16,
+  },
+  riskCard: {
+    backgroundColor: COLORS.surface,
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  riskHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  riskLevel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+  },
+  riskScore: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: COLORS.text.secondary,
+  },
+  risksList: {
+    marginBottom: 12,
+  },
+  riskItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  riskType: {
+    fontSize: 14,
+    color: COLORS.text.primary,
+    flex: 1,
+  },
+  riskProbability: {
+    fontSize: 12,
+    color: COLORS.text.secondary,
+    fontWeight: '500',
+  },
+  recommendationsSection: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.background,
+    paddingTop: 12,
+  },
+  recommendationsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  recommendationText: {
+    fontSize: 13,
+    color: COLORS.text.secondary,
+    lineHeight: 18,
+  },
 });
