@@ -1,23 +1,23 @@
-# Retours Utilisateurs et Améliorations - ClimInvest
+# User Feedback and Improvements - ClimInvest
 
-## Retours Utilisateurs Réels et Adaptations
+## Real User Feedback and Adaptations
 
-### 1. Préoccupation sur la Transparence des Fonds
+### 1. Concern About Fund Transparency
 
-**Retour Utilisateur:**
-> "Pendant 3 ans, je paie mes primes mais il n'y a pas eu de catastrophe. Où va mon argent ? Est-ce que vous le gardez pour vous ?"
-> - *Agriculteur de maïs, région de Parakou*
+**User Feedback:**
+> "For 3 years, I pay my premiums but there has been no disaster. Where does my money go? Do you keep it for yourselves?"
+> - *Corn farmer, Parakou region*
 
-**Réponse de l'Application:**
-- **Création de l'onglet "Analyses"** pour montrer la valeur ajoutée au-delà de l'assurance
-- **Score de crédit agricole** basé sur les données OpenEPI (sol, rendements, climat)
-- **Accès au financement** : montant éligible, taux d'intérêt, durée de remboursement
-- **Analyses agricoles avancées** : qualité du sol, rendements historiques, prix du marché
-- **Conseils personnalisés** pour optimiser la production et les ventes
+**Application Response:**
+- **Creation of "Analytics" tab** to show added value beyond insurance
+- **Agricultural credit score** based on OpenEPI data (soil, yields, climate)
+- **Access to financing**: eligible amount, interest rate, repayment duration
+- **Advanced agricultural analysis**: soil quality, historical yields, market prices
+- **Personalized advice** to optimize production and sales
 
-**Implémentation Technique:**
+**Technical Implementation:**
 ```typescript
-// InsightsScreen.tsx - Onglet Analyses complet
+// InsightsScreen.tsx - Complete Analytics tab
 export default function InsightsScreen({ navigation }: InsightsScreenProps) {
   const [creditScore, setCreditScore] = useState<FarmerCreditScore | null>(null);
   const [soilData, setSoilData] = useState<SoilData | null>(null);
@@ -25,7 +25,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
   const [priceData, setPriceData] = useState<PriceData | null>(null);
 
   const loadInsightsData = async () => {
-    // Charger toutes les données en parallèle avec OpenEPI
+    // Load all data in parallel with OpenEPI
     const [soil, yields, prices, credit] = await Promise.all([
       hybridOpenEpiService.getSoilData(user.location.latitude, user.location.longitude),
       hybridOpenEpiService.getCropYields('Benin', user.cropType || 'maize'),
@@ -38,7 +38,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       )
     ]);
 
-    // Affichage du score de crédit, analyses sol, rendements, prix
+    // Display credit score, soil analysis, yields, prices
     setCreditScore(credit);
     setSoilData(soil);
     setYieldData(yields);
@@ -47,7 +47,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
 }
 ```
 
-### 2. Difficulté d'Accès pour les Non-Smartphones
+### 2. Access Difficulty for Non-Smartphone Users
 
 **Retour Utilisateur:**
 > "Mon téléphone ne peut pas installer l'application. Comment je fais pour m'assurer ?"

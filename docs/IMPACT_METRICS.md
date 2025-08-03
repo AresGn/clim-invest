@@ -1,47 +1,47 @@
-# Métriques d'Impact - ClimInvest
+# Impact Metrics - ClimInvest
 
-## Vue d'Ensemble des Objectifs de Développement Durable
+## Sustainable Development Goals Overview
 
-ClimInvest contribue directement à plusieurs Objectifs de Développement Durable (SDG) des Nations Unies, avec des métriques quantifiables basées sur les données OpenEPI et l'utilisation réelle de l'application.
+ClimInvest directly contributes to several United Nations Sustainable Development Goals (SDGs), with quantifiable metrics based on OpenEPI data and actual application usage.
 
-## SDG 2 - Faim Zéro (Objectif Principal)
+## SDG 2 - Zero Hunger (Primary Objective)
 
-### Métriques Clés
+### Key Metrics
 
 ```typescript
-// Métriques de sécurité alimentaire
+// Food security metrics
 export const SDG2_METRICS = {
   foodSecurity: {
-    farmersProtected: 0,              // Nombre d'agriculteurs assurés
-    hectaresProtected: 0,             // Superficie totale protégée
-    householdsSecured: 0,             // Ménages bénéficiaires (x5 par agriculteur)
-    cropLossesAvoided: 0,             // Tonnes de récoltes sauvées
-    foodValueProtected: 0             // Valeur alimentaire protégée (FCFA)
+    farmersProtected: 0,              // Number of insured farmers
+    hectaresProtected: 0,             // Total protected area
+    householdsSecured: 0,             // Beneficiary households (x5 per farmer)
+    cropLossesAvoided: 0,             // Tons of crops saved
+    foodValueProtected: 0             // Protected food value (FCFA)
   },
-  
+
   resilience: {
-    averageRecoveryTime: 0,           // Temps moyen de récupération post-sinistre
-    adaptationMeasuresAdopted: 0,     // Pratiques agricoles améliorées adoptées
-    climateRiskReduction: 0,          // Réduction du risque climatique (%)
-    yieldStabilization: 0             // Stabilisation des rendements (%)
+    averageRecoveryTime: 0,           // Average post-disaster recovery time
+    adaptationMeasuresAdopted: 0,     // Improved agricultural practices adopted
+    climateRiskReduction: 0,          // Climate risk reduction (%)
+    yieldStabilization: 0             // Yield stabilization (%)
   }
 };
 
-// Calcul de l'impact sur la sécurité alimentaire
+// Food security impact calculation
 export class FoodSecurityImpactCalculator {
   calculateImpact(userBase: number, averageFarmSize: number) {
     const hectaresProtected = userBase * averageFarmSize;
-    const householdsSecured = userBase * 5; // Moyenne 5 personnes par ménage agricole
-    
-    // Estimation basée sur données OpenEPI et rendements moyens
+    const householdsSecured = userBase * 5; // Average 5 people per farming household
+
+    // Estimation based on OpenEPI data and average yields
     const averageYieldPerHectare = {
-      maize: 1.2,      // tonnes/hectare
-      cotton: 0.8,     // tonnes/hectare
-      peanut: 1.0,     // tonnes/hectare
-      yam: 8.0,        // tonnes/hectare
-      vegetables: 15.0  // tonnes/hectare
+      maize: 1.2,      // tons/hectare
+      cotton: 0.8,     // tons/hectare
+      peanut: 1.0,     // tons/hectare
+      yam: 8.0,        // tons/hectare
+      vegetables: 15.0  // tons/hectare
     };
-    
+
     const cropDistribution = {
       maize: 0.35,
       cotton: 0.25,

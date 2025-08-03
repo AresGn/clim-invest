@@ -1,18 +1,18 @@
-# Documentation API - ClimInvest
+# API Documentation - ClimInvest
 
-## Vue d'Ensemble
+## Overview
 
-ClimInvest intègre plusieurs APIs pour fournir un service complet de micro-assurance climatique. L'architecture privilégie les APIs OpenEPI comme source principale de données, avec des services de fallback pour garantir la disponibilité.
+ClimInvest integrates several APIs to provide a complete climate micro-insurance service. The architecture prioritizes OpenEPI APIs as the main data source, with fallback services to ensure availability.
 
-## APIs OpenEPI - Services Principaux
+## OpenEPI APIs - Main Services
 
 ### 1. WeatherClient API
 
-**Endpoint Principal:** OpenEPI WeatherClient
-**Utilisation:** Données météorologiques temps réel et prévisions
+**Main Endpoint:** OpenEPI WeatherClient
+**Usage:** Real-time meteorological data and forecasts
 
 ```typescript
-// Configuration du client
+// Client configuration
 import { WeatherClient } from 'openepi-client';
 
 const weatherClient = new WeatherClient({
@@ -20,7 +20,7 @@ const weatherClient = new WeatherClient({
   baseURL: 'https://api.openepi.io/v1'
 });
 
-// Méthodes disponibles
+// Available methods
 interface WeatherClientMethods {
   getLocationForecast(lat: number, lon: number): Promise<LocationForecast>;
   getSummaryForecast(lat: number, lon: number): Promise<SummaryForecast>;
@@ -28,12 +28,12 @@ interface WeatherClientMethods {
 }
 ```
 
-**Exemple d'utilisation:**
+**Usage example:**
 ```typescript
-// Récupération des prévisions météo
+// Weather forecast retrieval
 const forecast = await weatherClient.getLocationForecast(6.3703, 2.3912);
 
-// Structure de réponse
+// Response structure
 interface LocationForecast {
   current: {
     temperature: number;

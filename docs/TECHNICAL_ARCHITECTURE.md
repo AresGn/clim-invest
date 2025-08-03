@@ -1,23 +1,23 @@
-# Architecture Technique - ClimInvest
+# Technical Architecture - ClimInvest
 
-## Vue d'Ensemble du Système
+## System Overview
 
-ClimInvest utilise une architecture mobile-first avec React Native, intégrant prioritairement les APIs OpenEPI pour les données climatiques et des fonctionnalités d'accessibilité multi-canaux pour servir les agriculteurs d'Afrique de l'Ouest.
+ClimInvest uses a mobile-first architecture with React Native, primarily integrating OpenEPI APIs for climate data and multi-channel accessibility features to serve farmers in West Africa.
 
-## Diagramme d'Architecture
+## Architecture Diagram
 
 ```mermaid
 graph TB
-    A[Agriculteur] -->|Appel 980| B[Centre d'Appels]
+    A[Farmer] -->|Call 980| B[Call Center]
     A -->|SMS MON ASSURANCE AGRICOLE 980| B
-    A -->|Application Mobile| C[React Native App]
+    A -->|Mobile Application| C[React Native App]
 
-    B --> D[Conseillers Multilingues]
+    B --> D[Multilingual Advisors]
     D --> E[Services Layer]
     C --> F[Redux Store]
     C --> E
 
-    E --> G[OpenEPI APIs - Priorité 1]
+    E --> G[OpenEPI APIs - Priority 1]
     E --> H[Open-Meteo - Fallback]
     E --> I[Mobile Money APIs]
     E --> J[SMS/Voice Services]
@@ -57,9 +57,9 @@ graph TB
     E --> R
 ```
 
-## Stack Technique Détaillé
+## Detailed Technical Stack
 
-### Frontend Mobile
+### Mobile Frontend
 
 ```typescript
 const techStack = {
@@ -76,45 +76,45 @@ const techStack = {
 }
 ```
 
-### Services Externes Intégrés - Priorité OpenEPI
+### Integrated External Services - OpenEPI Priority
 
-| Service | Fonction | Status | Rate Limit | Priorité |
+| Service | Function | Status | Rate Limit | Priority |
 |---------|----------|--------|------------|----------|
-| **OpenEPI WeatherClient** | Données météo temps réel | Intégré | 1000/jour | 1 |
-| **OpenEPI SoilClient** | Qualité des sols | Intégré | 1000/jour | 1 |
-| **OpenEPI FloodClient** | Détection inondations | Intégré | 1000/jour | 1 |
-| **OpenEPI CropHealthClient** | Santé des cultures | Intégré | 1000/jour | 1 |
-| **Open-Meteo** | Météo fallback | Actif | Illimité | 2 |
-| **NASA POWER** | Données historiques | Actif | Illimité | 3 |
-| **MTN MoMo** | Paiements | Simulé | 100/min | - |
-| **Orange Money** | Paiements | Simulé | 60/min | - |
+| **OpenEPI WeatherClient** | Real-time weather data | Integrated | 1000/day | 1 |
+| **OpenEPI SoilClient** | Soil quality | Integrated | 1000/day | 1 |
+| **OpenEPI FloodClient** | Flood detection | Integrated | 1000/day | 1 |
+| **OpenEPI CropHealthClient** | Crop health | Integrated | 1000/day | 1 |
+| **Open-Meteo** | Weather fallback | Active | Unlimited | 2 |
+| **NASA POWER** | Historical data | Active | Unlimited | 3 |
+| **MTN MoMo** | Payments | Simulated | 100/min | - |
+| **Orange Money** | Payments | Simulated | 60/min | - |
 
-## Canaux d'Accès Multi-Modaux
+## Multi-Modal Access Channels
 
-### 1. Appel Téléphonique au 980
+### 1. Phone Call to 980
 
 ```typescript
-// Flux d'appel téléphonique
+// Phone call flow
 interface CallFlowService {
   handleIncomingCall(phoneNumber: string, language: string): Promise<CallSession>;
-  
-  // Étapes du processus guidé
+
+  // Guided process steps
   steps: {
-    welcome: "Bienvenue chez ClimInvest. Choisissez votre langue",
-    identification: "Donnez votre nom et localisation",
-    cropSelection: "Quel type de culture cultivez-vous?",
-    riskAssessment: "Analyse de votre zone via OpenEPI...",
-    premiumCalculation: "Votre prime mensuelle est de X FCFA",
-    paymentSetup: "Configuration du paiement Mobile Money",
-    confirmation: "Votre assurance est active. SMS de confirmation envoyé"
+    welcome: "Welcome to ClimInvest. Choose your language",
+    identification: "Provide your name and location",
+    cropSelection: "What type of crop do you grow?",
+    riskAssessment: "Analyzing your area via OpenEPI...",
+    premiumCalculation: "Your monthly premium is X FCFA",
+    paymentSetup: "Mobile Money payment configuration",
+    confirmation: "Your insurance is active. Confirmation SMS sent"
   }
 }
 ```
 
-### 2. SMS Simple au 980
+### 2. Simple SMS to 980
 
 ```typescript
-// Service SMS automatisé
+// Automated SMS service
 class SMSService {
   async handleSMSSubscription(phoneNumber: string, message: string) {
     if (message.toUpperCase().includes("MON ASSURANCE AGRICOLE")) {
@@ -124,15 +124,15 @@ class SMSService {
 
   private async initiateSMSFlow(phoneNumber: string) {
     const responses = [
-      "Bienvenue! Répondez 1 pour Français, 2 pour Fon, 3 pour Yoruba",
-      "Indiquez votre région: 1-Cotonou, 2-Porto-Novo, 3-Parakou...",
-      "Type de culture: 1-Maïs, 2-Coton, 3-Arachide, 4-Igname",
-      "Analyse de votre zone en cours via OpenEPI...",
-      "Prime calculée: 800 FCFA/mois. Répondez OUI pour confirmer",
-      "Paiement Mobile Money configuré. Assurance active!"
+      "Welcome! Reply 1 for French, 2 for Fon, 3 for Yoruba",
+      "Indicate your region: 1-Cotonou, 2-Porto-Novo, 3-Parakou...",
+      "Crop type: 1-Corn, 2-Cotton, 3-Peanut, 4-Yam",
+      "Analyzing your area via OpenEPI...",
+      "Calculated premium: 800 FCFA/month. Reply YES to confirm",
+      "Mobile Money payment configured. Insurance active!"
     ];
-    
-    // Envoi séquentiel des SMS avec attente de réponse
+
+    // Sequential SMS sending with response waiting
     for (const response of responses) {
       await this.sendSMS(phoneNumber, response);
       await this.waitForResponse(phoneNumber);
@@ -141,10 +141,10 @@ class SMSService {
 }
 ```
 
-### 3. Application Mobile Complète
+### 3. Complete Mobile Application
 
 ```typescript
-// Navigation adaptative selon le canal d'accès
+// Adaptive navigation based on access channel
 export default function AppNavigator() {
   const { isAuthenticated, accessChannel } = useSelector((state: RootState) => state.auth);
 
@@ -166,9 +166,9 @@ export default function AppNavigator() {
 }
 ```
 
-## Intégration OpenEPI - Architecture Détaillée
+## OpenEPI Integration - Detailed Architecture
 
-### Service OpenEPI Principal
+### Main OpenEPI Service
 
 ```typescript
 // services/openEpiService.ts - Service principal
@@ -200,23 +200,23 @@ export class OpenEpiService {
     this.geocoderClient = new GeocoderClient(config);
   }
 
-  // Données météorologiques temps réel
+  // Real-time meteorological data
   async getCurrentWeather(lat: number, lon: number) {
     try {
       const forecast = await this.weatherClient.getLocationForecast(lat, lon);
       return this.processWeatherData(forecast);
     } catch (error) {
       console.error('❌ OpenEPI Weather Error:', error);
-      throw new Error('Impossible de récupérer les données météo OpenEPI');
+      throw new Error('Unable to retrieve OpenEPI weather data');
     }
   }
 
-  // Analyse de la qualité des sols
+  // Soil quality analysis
   async getSoilQuality(lat: number, lon: number) {
     try {
       const soilType = await this.soilClient.getSoilType(lat, lon);
       const soilProperties = await this.soilClient.getSoilProperties(lat, lon);
-      
+
       return {
         type: soilType,
         properties: soilProperties,
@@ -225,11 +225,11 @@ export class OpenEpiService {
       };
     } catch (error) {
       console.error('❌ OpenEPI Soil Error:', error);
-      throw new Error('Impossible d\'analyser la qualité du sol');
+      throw new Error('Unable to analyze soil quality');
     }
   }
 
-  // Détection d'inondations
+  // Flood detection
   async getFloodRisk(lat: number, lon: number) {
     try {
       const floodData = await this.floodClient.getFloodRisk(lat, lon);
@@ -241,11 +241,11 @@ export class OpenEpiService {
       };
     } catch (error) {
       console.error('❌ OpenEPI Flood Error:', error);
-      throw new Error('Impossible d\'évaluer le risque d\'inondation');
+      throw new Error('Unable to assess flood risk');
     }
   }
 
-  // Surveillance santé des cultures
+  // Crop health monitoring
   async getCropHealth(lat: number, lon: number, cropType: string) {
     try {
       const healthData = await this.cropHealthClient.getCropHealth(lat, lon, cropType);
@@ -257,16 +257,16 @@ export class OpenEpiService {
       };
     } catch (error) {
       console.error('❌ OpenEPI Crop Health Error:', error);
-      throw new Error('Impossible de surveiller la santé des cultures');
+      throw new Error('Unable to monitor crop health');
     }
   }
 }
 ```
 
-### Service Hybride avec Fallback
+### Hybrid Service with Fallback
 
 ```typescript
-// services/hybridOpenEpiService.ts - Service avec fallback intelligent
+// services/hybridOpenEpiService.ts - Service with intelligent fallback
 export class HybridOpenEpiService {
   private openEpiService: OpenEpiService;
   private fallbackServices: {
@@ -282,27 +282,27 @@ export class HybridOpenEpiService {
 
   async getWeatherData(lat: number, lon: number) {
     try {
-      // Priorité 1: OpenEPI
-      console.log('🌍 Tentative OpenEPI WeatherClient...');
+      // Priority 1: OpenEPI
+      console.log('🌍 Attempting OpenEPI WeatherClient...');
       const openEpiData = await this.openEpiService.getCurrentWeather(lat, lon);
-      console.log('✅ OpenEPI WeatherClient: Succès');
+      console.log('✅ OpenEPI WeatherClient: Success');
       return { source: 'OpenEPI', data: openEpiData };
-      
+
     } catch (openEpiError) {
-      console.warn('⚠️ OpenEPI indisponible, fallback Open-Meteo');
-      
+      console.warn('⚠️ OpenEPI unavailable, fallback to Open-Meteo');
+
       try {
         // Fallback: Open-Meteo
         const fallbackData = await this.fallbackServices.weather.getCurrentWeather(lat, lon);
-        console.log('✅ Open-Meteo Fallback: Succès');
+        console.log('✅ Open-Meteo Fallback: Success');
         return { source: 'Open-Meteo', data: fallbackData };
-        
+
       } catch (fallbackError) {
-        console.error('❌ Tous les services météo échoués');
-        // Données simulées en dernier recours
-        return { 
-          source: 'Simulated', 
-          data: this.generateDefaultWeatherData(lat, lon) 
+        console.error('❌ All weather services failed');
+        // Simulated data as last resort
+        return {
+          source: 'Simulated',
+          data: this.generateDefaultWeatherData(lat, lon)
         };
       }
     }
@@ -310,34 +310,34 @@ export class HybridOpenEpiService {
 
   async getSoilAnalysis(lat: number, lon: number) {
     try {
-      // Priorité absolue: OpenEPI SoilClient
-      console.log('🌍 Analyse sol via OpenEPI SoilClient...');
+      // Absolute priority: OpenEPI SoilClient
+      console.log('🌍 Soil analysis via OpenEPI SoilClient...');
       const soilData = await this.openEpiService.getSoilQuality(lat, lon);
-      console.log('✅ OpenEPI SoilClient: Analyse complète');
+      console.log('✅ OpenEPI SoilClient: Complete analysis');
       return { source: 'OpenEPI', data: soilData };
-      
+
     } catch (error) {
-      console.warn('⚠️ OpenEPI SoilClient indisponible, données simulées');
-      return { 
-        source: 'Simulated', 
-        data: this.generateSimulatedSoilData(lat, lon) 
+      console.warn('⚠️ OpenEPI SoilClient unavailable, simulated data');
+      return {
+        source: 'Simulated',
+        data: this.generateSimulatedSoilData(lat, lon)
       };
     }
   }
 }
 ```
 
-### Système de Déclenchement Automatique
+### Automatic Trigger System
 
 ```typescript
-// services/triggerService.ts - Déclenchement basé sur OpenEPI
+// services/triggerService.ts - OpenEPI-based triggering
 export class AutoTriggerService {
   private openEpiService: OpenEpiService;
   private payoutService: PayoutService;
 
   async evaluateAllTriggers() {
     const activePolicies = await this.getActivePolicies();
-    
+
     for (const policy of activePolicies) {
       await this.evaluatePolicyTriggers(policy);
     }
@@ -345,23 +345,23 @@ export class AutoTriggerService {
 
   private async evaluatePolicyTriggers(policy: InsurancePolicy) {
     const { latitude, longitude, cropType } = policy.location;
-    
+
     try {
-      // Collecte de données OpenEPI
+      // OpenEPI data collection
       const [weatherData, floodRisk, cropHealth] = await Promise.all([
         this.openEpiService.getCurrentWeather(latitude, longitude),
         this.openEpiService.getFloodRisk(latitude, longitude),
         this.openEpiService.getCropHealth(latitude, longitude, cropType)
       ]);
 
-      // Évaluation des seuils de déclenchement
+      // Trigger threshold evaluation
       const triggers = {
         drought: this.evaluateDroughtTrigger(weatherData, cropHealth),
         flood: this.evaluateFloodTrigger(floodRisk),
         cropStress: this.evaluateCropStressTrigger(cropHealth)
       };
 
-      // Déclenchement automatique si seuils atteints
+      // Automatic triggering if thresholds reached
       for (const [triggerType, isTriggered] of Object.entries(triggers)) {
         if (isTriggered) {
           await this.triggerAutomaticPayout(policy, triggerType, {
@@ -373,12 +373,12 @@ export class AutoTriggerService {
       }
 
     } catch (error) {
-      console.error(`❌ Erreur évaluation triggers pour police ${policy.id}:`, error);
+      console.error(`❌ Trigger evaluation error for policy ${policy.id}:`, error);
     }
   }
 
   private evaluateDroughtTrigger(weatherData: any, cropHealth: any): boolean {
-    // Seuils basés sur les données OpenEPI
+    // Thresholds based on OpenEPI data
     const droughtIndicators = {
       consecutiveDryDays: weatherData.consecutive_dry_days > 21,
       lowNDVI: cropHealth.ndvi_current < 0.3,
@@ -386,20 +386,20 @@ export class AutoTriggerService {
       lowSoilMoisture: weatherData.soil_moisture < 0.2
     };
 
-    // Déclenchement si au moins 3 indicateurs sont vrais
+    // Trigger if at least 3 indicators are true
     const triggeredCount = Object.values(droughtIndicators).filter(Boolean).length;
     return triggeredCount >= 3;
   }
 
   private async triggerAutomaticPayout(
-    policy: InsurancePolicy, 
-    triggerType: string, 
+    policy: InsurancePolicy,
+    triggerType: string,
     evidenceData: any
   ) {
-    console.log(`🚨 Déclenchement automatique: ${triggerType} pour police ${policy.id}`);
-    
+    console.log(`🚨 Automatic trigger: ${triggerType} for policy ${policy.id}`);
+
     const payoutAmount = this.calculatePayoutAmount(policy, triggerType, evidenceData);
-    
+
     await this.payoutService.processAutomaticPayout({
       policyId: policy.id,
       triggerType,
@@ -408,16 +408,16 @@ export class AutoTriggerService {
       timestamp: new Date().toISOString()
     });
 
-    // Notification SMS automatique
+    // Automatic SMS notification
     await this.notificationService.sendPayoutNotification(
       policy.farmerPhone,
-      `Indemnisation automatique de ${payoutAmount} FCFA déclenchée par ${triggerType}. Paiement en cours via Mobile Money.`
+      `Automatic compensation of ${payoutAmount} FCFA triggered by ${triggerType}. Payment in progress via Mobile Money.`
     );
   }
 }
 ```
 
-## Scoring de Crédit Basé sur OpenEPI
+## OpenEPI-Based Credit Scoring
 
 ```typescript
 // services/creditScoringService.ts
@@ -432,27 +432,27 @@ export class CreditScoringService {
   ): Promise<FarmerCreditScore> {
     
     try {
-      // Collecte de données OpenEPI pour scoring
+      // OpenEPI data collection for scoring
       const [soilQuality, cropHealth, weatherHistory, floodRisk] = await Promise.all([
         this.openEpiService.getSoilQuality(location.lat, location.lon),
         this.openEpiService.getCropHealth(location.lat, location.lon, cropType),
-        this.openEpiService.getWeatherHistory(location.lat, location.lon, 5), // 5 ans
+        this.openEpiService.getWeatherHistory(location.lat, location.lon, 5), // 5 years
         this.openEpiService.getFloodRisk(location.lat, location.lon)
       ]);
 
-      // Calcul des scores par composante
+      // Component score calculation
       const soilScore = this.calculateSoilScore(soilQuality);
       const cropScore = this.calculateCropScore(cropHealth);
       const weatherScore = this.calculateWeatherStabilityScore(weatherHistory);
       const riskScore = this.calculateRiskScore(floodRisk);
 
-      // Score global pondéré
+      // Weighted overall score
       const overallScore = Math.round(
-        (soilScore * 0.30) +      // Qualité du sol - facteur principal
-        (cropScore * 0.25) +      // Santé actuelle des cultures
-        (weatherScore * 0.25) +   // Stabilité climatique historique
-        (riskScore * 0.20)        // Niveau de risque géographique
-      ) * 10; // Échelle 0-1000
+        (soilScore * 0.30) +      // Soil quality - main factor
+        (cropScore * 0.25) +      // Current crop health
+        (weatherScore * 0.25) +   // Historical climate stability
+        (riskScore * 0.20)        // Geographic risk level
+      ) * 10; // Scale 0-1000
 
       return {
         overallScore,
@@ -470,14 +470,14 @@ export class CreditScoringService {
       };
 
     } catch (error) {
-      console.error('❌ Erreur scoring crédit OpenEPI:', error);
-      // Fallback vers scoring simplifié
+      console.error('❌ OpenEPI credit scoring error:', error);
+      // Fallback to simplified scoring
       return this.calculateBasicCreditScore(farmerId, location, cropType, farmSize);
     }
   }
 
   private calculateSoilScore(soilData: any): number {
-    // Scoring basé sur les données OpenEPI SoilClient
+    // Scoring based on OpenEPI SoilClient data
     const factors = {
       ph: this.scorePH(soilData.properties.ph),
       organicMatter: this.scoreOrganicMatter(soilData.properties.organic_matter),
@@ -490,35 +490,35 @@ export class CreditScoringService {
 }
 ```
 
-## Conclusion Technique
+## Technical Conclusion
 
-### Architecture Robuste et Évolutive
+### Robust and Scalable Architecture
 
-L'architecture technique de ClimInvest repose sur trois piliers fondamentaux :
+ClimInvest's technical architecture rests on three fundamental pillars:
 
-1. **Intégration OpenEPI Prioritaire**
-   - Services climatiques, pédologiques et agricoles en temps réel
-   - Déclenchement automatique des indemnisations basé sur données satellite
-   - Scoring de crédit avancé pour services financiers étendus
+1. **Priority OpenEPI Integration**
+   - Real-time climate, soil, and agricultural services
+   - Automatic payout triggering based on satellite data
+   - Advanced credit scoring for extended financial services
 
-2. **Accessibilité Multi-Canaux**
-   - Application mobile complète avec support d'accessibilité
-   - Service téléphonique 980 avec conseillers multilingues
-   - SMS simple "MON ASSURANCE AGRICOLE" au 980
-   - Système communautaire d'entraide
+2. **Multi-Channel Accessibility**
+   - Complete mobile application with accessibility support
+   - 980 phone service with multilingual advisors
+   - Simple SMS "MON ASSURANCE AGRICOLE" to 980
+   - Community mutual aid system
 
-3. **Résilience et Performance**
-   - Services de fallback automatiques (Open-Meteo, NASA POWER)
-   - Cache intelligent et gestion d'erreurs robuste
-   - Monitoring en temps réel des APIs et services
-   - Scalabilité horizontale pour croissance rapide
+3. **Resilience and Performance**
+   - Automatic fallback services (Open-Meteo, NASA POWER)
+   - Intelligent caching and robust error handling
+   - Real-time API and service monitoring
+   - Horizontal scalability for rapid growth
 
-### Avantages Compétitifs Techniques
+### Technical Competitive Advantages
 
-- **Données de Qualité** : Intégration prioritaire OpenEPI pour précision maximale
-- **Déploiement Rapide** : Architecture React Native cross-platform
-- **Coûts Optimisés** : Fallback intelligent réduisant la dépendance API
-- **Inclusion Maximale** : Support complet accessibilité et langues locales
+- **Quality Data**: Priority OpenEPI integration for maximum precision
+- **Rapid Deployment**: Cross-platform React Native architecture
+- **Optimized Costs**: Intelligent fallback reducing API dependency
+- **Maximum Inclusion**: Complete accessibility and local language support
 
-Cette architecture technique garantit une solution robuste, accessible et évolutive, capable de servir efficacement 500,000+ agriculteurs d'Afrique de l'Ouest avec des fonctionnalités avancées tout en maintenant la simplicité d'utilisation et l'accessibilité universelle.
+This technical architecture guarantees a robust, accessible, and scalable solution, capable of efficiently serving 500,000+ farmers in West Africa with advanced features while maintaining ease of use and universal accessibility.
 

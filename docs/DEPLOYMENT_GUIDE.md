@@ -1,52 +1,52 @@
-# Guide de Déploiement - ClimInvest
+# Deployment Guide - ClimInvest
 
-## Vue d'Ensemble du Déploiement
+## Deployment Overview
 
-Ce guide détaille le déploiement complet de ClimInvest, incluant l'application mobile, les services backend, l'intégration OpenEPI, et l'infrastructure de support multi-canaux (application, appel 980, SMS).
+This guide details the complete deployment of ClimInvest, including the mobile application, backend services, OpenEPI integration, and multi-channel support infrastructure (application, 980 call, SMS).
 
-## Prérequis Techniques
+## Technical Prerequisites
 
-### Environnement de Développement
+### Development Environment
 
 ```bash
-# Versions requises
+# Required versions
 Node.js >= 18.0.0
 npm >= 8.0.0
 React Native CLI >= 2.0.1
 Expo CLI >= 6.0.0
 
-# Outils de développement
-Android Studio (pour Android)
-Xcode (pour iOS, macOS uniquement)
-VS Code avec extensions React Native
+# Development tools
+Android Studio (for Android)
+Xcode (for iOS, macOS only)
+VS Code with React Native extensions
 ```
 
-### Clés API Requises
+### Required API Keys
 
 ```bash
-# Variables d'environnement essentielles
+# Essential environment variables
 OPENEPI_API_KEY=your_openepi_key_here
 OPENEPI_CLIENT_ID=your_client_id
 OPENEPI_CLIENT_SECRET=your_client_secret
 OPENEPI_BASE_URL=https://api.openepi.io/v1
 
-# APIs de fallback
+# Fallback APIs
 OPENWEATHER_API_KEY=your_openweather_key
 NASA_POWER_API_KEY=optional_nasa_key
 
-# Services Mobile Money (simulation)
+# Mobile Money services (simulation)
 MTN_MOMO_API_KEY=simulation_key
 ORANGE_MONEY_API_KEY=simulation_key
 FLOOZ_API_KEY=simulation_key
 
-# Services de communication
+# Communication services
 SMS_SERVICE_API_KEY=your_sms_provider_key
 VOICE_SERVICE_API_KEY=your_voice_provider_key
 ```
 
-## Installation et Configuration
+## Installation and Configuration
 
-### 1. Clonage et Installation
+### 1. Cloning and Installation
 
 ```bash
 # Cloner le repository

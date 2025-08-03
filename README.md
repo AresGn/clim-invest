@@ -1,9 +1,9 @@
-# ClimInvest - Micro-Assurance Climatique par SMS
+# ClimInvest - Climate Micro-Insurance via SMS
 
 <div align="center">
   <img src="assets/icon.png" alt="ClimInvest Logo" width="120" height="120">
 
-  ## Révolutionner l'Assurance Agricole en Afrique de l'Ouest
+  ## Revolutionizing Agricultural Insurance in West Africa
 </div>
 
 [![OpenEPI Hackathon 2025](https://img.shields.io/badge/OpenEPI-Hackathon%202025-blue)](https://developer.openepi.io/hackathon-2025)
@@ -11,267 +11,276 @@
 [![React Native](https://img.shields.io/badge/React%20Native-0.72-blue)](https://reactnative.dev/)
 [![OpenEPI](https://img.shields.io/badge/OpenEPI-Integrated-green)](https://openepi.io/)
 
-## Aperçu du Projet
+## Project Overview
 
-ClimInvest est une application mobile révolutionnaire qui démocratise l'accès à l'assurance agricole en Afrique de l'Ouest. Utilisant une approche mobile-first avec intégration SMS et appels téléphoniques, l'application offre une micro-assurance climatique accessible à tous les agriculteurs, même ceux sans smartphone.
+ClimInvest is a revolutionary mobile application that democratizes access to agricultural insurance in West Africa. Using a mobile-first approach with SMS integration and phone calls, the application offers climate micro-insurance accessible to all farmers, even those without smartphones.
 
-## 🎥 Démonstration Vidéo
+## 🎥 Video Demonstration
 
 <div align="center">
+
+### Video 1 - Application Overview
   <video width="600" controls>
-    <source src="https://res.cloudinary.com/dtwx8br7o/video/upload/v1753450192/2025-07-25_14-23-56_xv9mqb.mp4" type="video/mp4">
-    Votre navigateur ne supporte pas la lecture vidéo.
+    <source src="assets/videos/Video1.mp4" type="video/mp4">
+    Your browser does not support video playback.
   </video>
+
+### Video 2 - Detailed Features
+  <video width="600" controls>
+    <source src="assets/videos/Video2.mp4" type="video/mp4">
+    Your browser does not support video playback.
+  </video>
+
 </div>
 
-> **Découvrez ClimInvest en action** : souscription par SMS, déclenchement automatique des indemnisations, onglet Analyses avec scoring de crédit, et toutes les fonctionnalités d'accessibilité.
+> **Discover ClimInvest in action**: SMS subscription, automatic payout triggers, Analytics tab with credit scoring, and all accessibility features.
 
-*[Cliquez sur la vidéo pour voir la démonstration complète de l'application]*
+*[Click on the videos to see the complete application demonstration]*
 
-### Problématique Adressée
+### Problem Addressed
 
-- **97% des agriculteurs africains non-assurés** vs 50% en Asie
-- **0.7% des primes d'assurance mondiale** pour 17% des terres arables
-- **Délais d'indemnisation: 3-6 mois** avec l'assurance traditionnelle
-- **Barrières d'accès**: coûts prohibitifs, complexité administrative, faible bancarisation
+- **97% of African farmers uninsured** vs 50% in Asia
+- **0.7% of global insurance premiums** for 17% of arable land
+- **Compensation delays: 3-6 months** with traditional insurance
+- **Access barriers**: prohibitive costs, administrative complexity, low banking penetration
 
-### Solution Innovante
+### Innovative Solution
 
-Micro-assurance **100% mobile** utilisant:
-- **Appel au 980** - Conseillers guidant le processus complet
-- **SMS "MON ASSURANCE AGRICOLE" au 980** - Souscription par SMS simple
-- **APIs OpenEPI avancées** - Données climatiques, sol, rendements en temps réel
+**100% mobile** micro-insurance using:
+- **Call to 980** - Advisors guiding the complete process
+- **SMS "MON ASSURANCE AGRICOLE" to 980** - Simple SMS subscription
+- **Advanced OpenEPI APIs** - Real-time climate, soil, yield data
 - **Mobile Money** - MTN MoMo, Orange Money, Flooz
-- **Interface vocale** - Langues locales (fon, yoruba, bambara)
-- **Communauté** - Un utilisateur peut aider toute sa communauté agricole
+- **Voice interface** - Local languages (fon, yoruba, bambara)
+- **Community** - One user can help their entire farming community
 
-## Fonctionnalités d'Accessibilité
+## Accessibility Features
 
-### Options d'Accès Multiple
+### Multiple Access Options
 
-1. **Application Mobile** (Android/iOS)
-   - Interface complète avec toutes les fonctionnalités
-   - Support des lecteurs d'écran
-   - Navigation vocale en langues locales
-   - Intégration complète des APIs OpenEPI
+1. **Mobile Application** (Android/iOS)
+   - Complete interface with all features
+   - Screen reader support
+   - Voice navigation in local languages
+   - Full OpenEPI APIs integration
 
-2. **Accès par Téléphone (980)**
-   - **Pour les utilisateurs sans smartphone Android**
-   - Conseillers guidant le processus de souscription
-   - Même processus pour les demandes de prêt
-   - Support multilingue
-   - Accès aux mêmes données OpenEPI via conseillers
+2. **Phone Access (980)**
+   - **For users without Android smartphones**
+   - Advisors guiding the subscription process
+   - Same process for loan applications
+   - Multilingual support
+   - Access to same OpenEPI data via advisors
 
-3. **SMS Simple au 980**
-   - Envoyer **"MON ASSURANCE AGRICOLE"** au 980
-   - Processus guidé par SMS
-   - Confirmation et suivi par SMS
-   - Accessible sur tous les téléphones
+3. **Simple SMS to 980**
+   - Send **"MON ASSURANCE AGRICOLE"** to 980
+   - SMS-guided process
+   - SMS confirmation and follow-up
+   - Accessible on all phones
 
-4. **Système Communautaire**
-   - Un agriculteur avec l'application peut aider sa communauté
-   - Inscription collective facilitée
-   - Partage d'informations climatiques OpenEPI
+4. **Community System**
+   - A farmer with the app can help their community
+   - Facilitated collective registration
+   - Sharing of OpenEPI climate information
 
-### Transparence des Données
+### Data Transparency
 
-L'onglet **Analyses** fournit des services avancés basés sur les retours utilisateurs :
-- **Score de crédit agricole** basé sur données OpenEPI (sol, climat, rendements)
-- **Accès au financement** avec montants éligibles et taux personnalisés
-- **Analyses agricoles** : qualité du sol, rendements historiques, prix du marché
-- **Conseils personnalisés** pour optimiser production et ventes
+The **Analytics** tab provides advanced services based on user feedback:
+- **Agricultural credit score** based on OpenEPI data (soil, climate, yields)
+- **Access to financing** with eligible amounts and personalized rates
+- **Agricultural analysis**: soil quality, historical yields, market prices
+- **Personalized advice** to optimize production and sales
 
-## Intégration OpenEPI - Cœur du Système
+## OpenEPI Integration - System Core
 
-### APIs OpenEPI Utilisées
+### OpenEPI APIs Used
 
 1. **Climate Data API**
-   - Données météorologiques historiques et temps réel
-   - Indices de sécheresse et de précipitations
-   - Déclenchement automatique des indemnisations
+   - Historical and real-time meteorological data
+   - Drought and precipitation indices
+   - Automatic payout triggers
 
 2. **Soil Quality API**
-   - Analyse de la qualité des sols
-   - Recommandations agricoles personnalisées
-   - Scoring de crédit basé sur la qualité du sol
+   - Soil quality analysis
+   - Personalized agricultural recommendations
+   - Credit scoring based on soil quality
 
 3. **Crop Health Monitoring**
-   - Surveillance satellite des cultures
-   - Détection précoce des stress hydriques
-   - Alertes proactives aux agriculteurs
+   - Satellite crop surveillance
+   - Early detection of water stress
+   - Proactive alerts to farmers
 
 4. **Flood Detection API**
-   - Détection d'inondations en temps réel
-   - Cartographie des zones affectées
-   - Déclenchement automatique des compensations
+   - Real-time flood detection
+   - Mapping of affected areas
+   - Automatic compensation triggers
 
-### Avantages de l'Intégration OpenEPI
+### Benefits of OpenEPI Integration
 
-- **Données fiables et actualisées** en temps réel
-- **Couverture géographique complète** de l'Afrique de l'Ouest
-- **Algorithmes de détection avancés** pour les événements climatiques
-- **Intégration transparente** avec les systèmes de paiement mobile
-- **Réduction des coûts** grâce à l'automatisation
+- **Reliable and updated data** in real-time
+- **Complete geographical coverage** of West Africa
+- **Advanced detection algorithms** for climate events
+- **Seamless integration** with mobile payment systems
+- **Cost reduction** through automation
 
-## Avantages Compétitifs vs Assurance Traditionnelle
+## Competitive Advantages vs Traditional Insurance
 
-| **Critère** | **Clim-Invest** | **Assurance Classique** |
+| **Criteria** | **ClimInvest** | **Traditional Insurance** |
 |-------------|-----------------|-------------------------|
-| **Coût mensuel** | 200-1 000 FCFA | 5 000-20 000 FCFA |
-| **Délai d'indemnisation** | 24-72h automatique | 3-6 mois (expertise) |
-| **Accessibilité** | Mobile money + analphabètes | Bureau + compte bancaire |
-| **Couverture géographique** | Zones reculées via satellite | Centres urbains uniquement |
-| **Prérequis** | Téléphone basique | Smartphone + internet |
+| **Monthly cost** | 200-1,000 FCFA | 5,000-20,000 FCFA |
+| **Payout delay** | 24-72h automatic | 3-6 months (expertise) |
+| **Accessibility** | Mobile money + illiterate | Office + bank account |
+| **Geographic coverage** | Remote areas via satellite | Urban centers only |
+| **Prerequisites** | Basic phone | Smartphone + internet |
 
-## Fondations Technologiques Éprouvées
+## Proven Technological Foundations
 
-Les données satellites sont accessibles via Digital Earth Africa, qui fournit des images historiques depuis 1984 couvrant tout le continent africain. Le système NDVI permet de détecter le stress des cultures jusqu'à **2 semaines avant détection visuelle**, tandis que Sentinel-1 offre une précision **>95% pour la détection d'inondations**.
+Satellite data is accessible via Digital Earth Africa, which provides historical images since 1984 covering the entire African continent. The NDVI system can detect crop stress up to **2 weeks before visual detection**, while Sentinel-1 offers **>95% accuracy for flood detection**.
 
-Les infrastructures AGRHYMET garantissent l'accès aux données météorologiques en temps réel pour les 15 pays de la CEDEAO, avec des stations météo automatisées et des modèles de prévision saisonnière Next Generation.
+AGRHYMET infrastructures guarantee access to real-time meteorological data for the 15 ECOWAS countries, with automated weather stations and Next Generation seasonal forecasting models.
 
-## Modèle Économique Durable
+## Sustainable Economic Model
 
-- **80%** des primes → Fonds d'indemnisation
-- **15%** → Coûts techniques (données, SMS, plateforme)
-- **5%** → Croissance et réserves
+- **80%** of premiums → Compensation fund
+- **15%** → Technical costs (data, SMS, platform)
+- **5%** → Growth and reserves
 
-**Seuil de rentabilité** : 50,000 assurés avec un fonds de réserve gouvernemental de 10% des primes pour les catastrophes majeures.
+**Break-even point**: 50,000 insured with a government reserve fund of 10% of premiums for major disasters.
 
-## Enseignements Internationaux
+## International Lessons
 
-**Kenya (Kilimo Salama)** : Lancé en 2009 avec 200 agriculteurs, le programme a atteint 51,000 assurés au Kenya et 14,000 au Rwanda. Les revenus de primes sont passés de 19 millions KSh en 2011 à 33 millions KSh en 6 mois en 2012.
+**Kenya (Kilimo Salama)**: Launched in 2009 with 200 farmers, the program reached 51,000 insured in Kenya and 14,000 in Rwanda. Premium revenues increased from 19 million KSh in 2011 to 33 million KSh in 6 months in 2012.
 
-**Inde (PMFBY)** : Le programme gouvernemental couvre 194 millions d'agriculteurs avec des subventions de 50% des primes. Les primes varient de 1,5% à 5% des sommes assurées selon les cultures.
+**India (PMFBY)**: The government program covers 194 million farmers with 50% premium subsidies. Premiums range from 1.5% to 5% of insured amounts depending on crops.
 
-Ces succès démontrent la viabilité de l'assurance indicielle à grande échelle avec un soutien public approprié.
+These successes demonstrate the viability of index insurance at scale with appropriate public support.
 
-## Impact Projeté
+## Projected Impact
 
-- **500,000 agriculteurs** protégés d'ici 2027
-- **2.5 millions de personnes** sécurisées (familles incluses)
-- **Indemnisation 45x plus rapide** (24-72h vs 3-6 mois)
-- **Coût 10x inférieur** à l'assurance traditionnelle
-- **Couverture géographique étendue** grâce aux données OpenEPI
+- **500,000 farmers** protected by 2027
+- **2.5 million people** secured (families included)
+- **45x faster compensation** (24-72h vs 3-6 months)
+- **10x lower cost** than traditional insurance
+- **Extended geographic coverage** thanks to OpenEPI data
 
-## Contribution aux SDG
+## SDG Contribution
 
-- **SDG 2**: Éliminer la faim - Sécurité alimentaire
-- **SDG 1**: Réduction de la pauvreté rurale
-- **SDG 13**: Action climatique - Résilience aux chocs
-- **SDG 10**: Réduction des inégalités - Accès démocratisé
+- **SDG 2**: Zero Hunger - Food security
+- **SDG 1**: Rural poverty reduction
+- **SDG 13**: Climate action - Shock resilience
+- **SDG 10**: Reduced inequalities - Democratized access
 
-## Installation et Démarrage
+## Installation and Setup
 
-### Prérequis
+### Prerequisites
 
 ```bash
 Node.js >= 18
-npm ou yarn
+npm or yarn
 Expo CLI
-Android Studio (pour émulation Android)
-Xcode (pour émulation iOS, macOS uniquement)
-Clés API OpenEPI (requises)
+Android Studio (for Android emulation)
+Xcode (for iOS emulation, macOS only)
+OpenEPI API keys (required)
 ```
 
 ### Installation
 
 ```bash
-# Cloner le repository
-git clone https://github.com/votre-username/clim-invest
+# Clone the repository
+git clone https://github.com/your-username/clim-invest
 cd clim-invest
 
-# Installer les dépendances
+# Install dependencies
 npm install
 
-# Configurer les clés OpenEPI dans .env
+# Configure OpenEPI keys in .env
 cp .env.example .env
-# Ajouter vos clés OpenEPI
+# Add your OpenEPI keys
 
-# Démarrer le serveur de développement
+# Start development server
 npm start
 
-# Lancer sur Android
+# Run on Android
 npm run android
 
-# Lancer sur iOS
+# Run on iOS
 npm run ios
 ```
 
-### Configuration OpenEPI
+### OpenEPI Configuration
 
 ```bash
-# Variables d'environnement requises
+# Required environment variables
 OPENEPI_API_KEY=your_api_key_here
 OPENEPI_BASE_URL=https://api.openepi.io/v1
 OPENEPI_CLIENT_ID=your_client_id
 OPENEPI_CLIENT_SECRET=your_client_secret
 ```
 
-## Structure du Projet
+## Project Structure
 
 ```
 ClimInvest/
 ├── src/
-│   ├── components/          # Composants réutilisables
-│   │   ├── common/         # Composants accessibles
-│   │   ├── cards/          # Cartes d'information
-│   │   └── dashboard/      # Composants tableau de bord
-│   ├── screens/            # Écrans principaux
-│   ├── navigation/         # Configuration navigation
-│   ├── services/           # APIs OpenEPI et autres services
-│   │   ├── openEpiService.ts        # Service OpenEPI principal
-│   │   ├── hybridOpenEpiService.ts  # Service hybride avec fallback
-│   │   └── creditScoringService.ts  # Scoring basé sur OpenEPI
-│   ├── store/              # Redux store et slices
-│   ├── types/              # Types TypeScript
-│   ├── utils/              # Utilitaires
-│   └── hooks/              # Hooks personnalisés
-├── docs/                   # Documentation technique
-└── assets/                 # Ressources statiques
+│   ├── components/          # Reusable components
+│   │   ├── common/         # Accessible components
+│   │   ├── cards/          # Information cards
+│   │   └── dashboard/      # Dashboard components
+│   ├── screens/            # Main screens
+│   ├── navigation/         # Navigation configuration
+│   ├── services/           # OpenEPI APIs and other services
+│   │   ├── openEpiService.ts        # Main OpenEPI service
+│   │   ├── hybridOpenEpiService.ts  # Hybrid service with fallback
+│   │   └── creditScoringService.ts  # OpenEPI-based scoring
+│   ├── store/              # Redux store and slices
+│   ├── types/              # TypeScript types
+│   ├── utils/              # Utilities
+│   └── hooks/              # Custom hooks
+├── docs/                   # Technical documentation
+└── assets/                 # Static resources
 ```
 
-## Documentation Complète
+## Complete Documentation
 
-- [Architecture Technique](docs/TECHNICAL_ARCHITECTURE.md)
-- [Intégration OpenEPI](docs/DATA_SOURCES.md)
-- [Documentation API](docs/API_DOCUMENTATION.md)
-- [Modèle Économique](docs/BUSINESS_MODEL.md)
-- [Métriques d'Impact](docs/IMPACT_METRICS.md)
-- [Guide de Déploiement](docs/DEPLOYMENT_GUIDE.md)
-- [Retours Utilisateurs](docs/USER_FEEDBACK.md)
+- [Technical Architecture](docs/TECHNICAL_ARCHITECTURE.md)
+- [OpenEPI Integration](docs/DATA_SOURCES.md)
+- [API Documentation](docs/API_DOCUMENTATION.md)
+- [Business Model](docs/BUSINESS_MODEL.md)
+- [Impact Metrics](docs/IMPACT_METRICS.md)
+- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+- [User Feedback](docs/USER_FEEDBACK.md)
 
-## Tests et Qualité
+## Testing and Quality
 
 ```bash
-# Lancer les tests
+# Run tests
 npm test
 
-# Tests avec couverture
+# Tests with coverage
 npm run test:coverage
 
-# Tests d'intégration OpenEPI
+# OpenEPI integration tests
 npm run test:openepi
 
 # Linting
 npm run lint
 ```
 
-## Contact et Support
+## Contact and Support
 
-### Pour les Agriculteurs
-- **Téléphone**: 980 (gratuit)
-- **SMS**: Envoyer "MON ASSURANCE AGRICOLE" au 980
-- **Application**: Télécharger sur Google Play Store
+### For Farmers
+- **Phone**: 980 (free)
+- **SMS**: Send "MON ASSURANCE AGRICOLE" to 980
+- **Application**: Download from Google Play Store
 
-### Pour les Développeurs
-- **Équipe ClimInvest** - contact@climinvest.org
-- **Documentation OpenEPI** - [https://developer.openepi.io](https://developer.openepi.io)
+### For Developers
+- **ClimInvest Team** - contact@climinvest.org
+- **OpenEPI Documentation** - [https://developer.openepi.io](https://developer.openepi.io)
 - **Repository** - [https://github.com/climinvest/mobile-app](https://github.com/climinvest/mobile-app)
 
-## Licence
+## License
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+This project is under MIT license. See the `LICENSE` file for more details.
 
 ---
 
-*Développé pour OpenEPI Hackathon 2025 - Révolutionner l'agriculture africaine par les données climatiques*
+*Developed for OpenEPI Hackathon 2025 - Revolutionizing African agriculture through climate data*

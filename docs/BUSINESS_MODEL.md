@@ -1,22 +1,22 @@
-# Modèle Économique - ClimInvest
+# Business Model - ClimInvest
 
-## Vue d'Ensemble du Modèle
+## Model Overview
 
-ClimInvest opère sur un modèle de micro-assurance climatique durable, combinant accessibilité maximale et viabilité économique. Le modèle s'appuie sur les données OpenEPI pour optimiser les coûts et automatiser les processus.
+ClimInvest operates on a sustainable climate micro-insurance model, combining maximum accessibility and economic viability. The model relies on OpenEPI data to optimize costs and automate processes.
 
-## Structure Tarifaire
+## Pricing Structure
 
-### Primes Mensuelles par Culture et Zone de Risque
+### Monthly Premiums by Crop and Risk Zone
 
-| Culture | Zone Faible Risque | Zone Moyenne Risque | Zone Haut Risque | Couverture Max |
+| Crop | Low Risk Zone | Medium Risk Zone | High Risk Zone | Max Coverage |
 |---------|-------------------|-------------------|------------------|----------------|
-| **Maïs** | 400 FCFA/mois | 600 FCFA/mois | 800 FCFA/mois | 30,000 FCFA |
-| **Coton** | 350 FCFA/mois | 550 FCFA/mois | 750 FCFA/mois | 25,000 FCFA |
-| **Arachide** | 300 FCFA/mois | 500 FCFA/mois | 700 FCFA/mois | 20,000 FCFA |
-| **Igname** | 450 FCFA/mois | 650 FCFA/mois | 850 FCFA/mois | 35,000 FCFA |
-| **Maraîchage** | 250 FCFA/mois | 400 FCFA/mois | 600 FCFA/mois | 15,000 FCFA |
+| **Corn** | 400 FCFA/month | 600 FCFA/month | 800 FCFA/month | 30,000 FCFA |
+| **Cotton** | 350 FCFA/month | 550 FCFA/month | 750 FCFA/month | 25,000 FCFA |
+| **Peanut** | 300 FCFA/month | 500 FCFA/month | 700 FCFA/month | 20,000 FCFA |
+| **Yam** | 450 FCFA/month | 650 FCFA/month | 850 FCFA/month | 35,000 FCFA |
+| **Market Gardening** | 250 FCFA/month | 400 FCFA/month | 600 FCFA/month | 15,000 FCFA |
 
-### Calcul des Primes Basé sur OpenEPI
+### OpenEPI-Based Premium Calculation
 
 ```typescript
 // Algorithme de pricing basé sur les données OpenEPI

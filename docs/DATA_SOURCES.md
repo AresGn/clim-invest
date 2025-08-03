@@ -1,15 +1,15 @@
-# Sources de Données - Intégration OpenEPI
+# Data Sources - OpenEPI Integration
 
-## Vue d'Ensemble
+## Overview
 
-ClimInvest s'appuie prioritairement sur les APIs OpenEPI pour fournir des données climatiques, pédologiques et agricoles fiables aux agriculteurs d'Afrique de l'Ouest. Cette intégration permet un déclenchement automatique des indemnisations et un scoring de crédit précis.
+ClimInvest primarily relies on OpenEPI APIs to provide reliable climate, soil, and agricultural data to farmers in West Africa. This integration enables automatic payout triggering and precise credit scoring.
 
-## APIs OpenEPI - Cœur du Système
+## OpenEPI APIs - System Core
 
-### 1. WeatherClient - Données Météorologiques
+### 1. WeatherClient - Meteorological Data
 
 ```typescript
-// Intégration OpenEPI WeatherClient
+// OpenEPI WeatherClient integration
 import { WeatherClient } from 'openepi-client';
 
 const weatherClient = new WeatherClient({
@@ -17,14 +17,14 @@ const weatherClient = new WeatherClient({
   baseURL: 'https://api.openepi.io/v1'
 });
 
-// Utilisation pour déclenchement automatique
+// Usage for automatic triggering
 export class WeatherTriggerService {
   async evaluateWeatherTriggers(lat: number, lon: number) {
     try {
-      // Prévisions détaillées OpenEPI
+      // Detailed OpenEPI forecasts
       const forecast = await weatherClient.getLocationForecast(lat, lon);
       const summary = await weatherClient.getSummaryForecast(lat, lon);
-      
+
       return {
         current_conditions: forecast.current,
         daily_forecast: forecast.daily,
@@ -47,23 +47,23 @@ export class WeatherTriggerService {
 }
 ```
 
-**Données Fournies:**
-- Température actuelle et prévisions 7 jours
-- Précipitations historiques et prévisions
-- Humidité relative et vitesse du vent
-- Alertes météorologiques automatiques
-- Indices de sécheresse et de stress hydrique
+**Data Provided:**
+- Current temperature and 7-day forecasts
+- Historical and forecast precipitation
+- Relative humidity and wind speed
+- Automatic weather alerts
+- Drought and water stress indices
 
-**Utilisation dans ClimInvest:**
-- Déclenchement automatique des indemnisations sécheresse
-- Alertes proactives aux agriculteurs
-- Calcul des primes basé sur le risque climatique
-- Recommandations agricoles personnalisées
+**Usage in ClimInvest:**
+- Automatic drought compensation triggering
+- Proactive alerts to farmers
+- Climate risk-based premium calculation
+- Personalized agricultural recommendations
 
-### 2. SoilClient - Analyse Pédologique
+### 2. SoilClient - Soil Analysis
 
 ```typescript
-// Intégration OpenEPI SoilClient
+// OpenEPI SoilClient integration
 import { SoilClient } from 'openepi-client';
 
 const soilClient = new SoilClient({
@@ -73,10 +73,10 @@ const soilClient = new SoilClient({
 export class SoilAnalysisService {
   async getComprehensiveSoilData(lat: number, lon: number) {
     try {
-      // Données complètes du sol via OpenEPI
+      // Complete soil data via OpenEPI
       const soilType = await soilClient.getSoilType(lat, lon);
       const soilProperties = await soilClient.getSoilProperties(lat, lon);
-      
+
       return {
         soil_type: soilType,
         properties: {
@@ -97,7 +97,7 @@ export class SoilAnalysisService {
   }
 
   private calculateSoilQualityScore(properties: any): number {
-    // Algorithme de scoring basé sur les propriétés OpenEPI
+    // Scoring algorithm based on OpenEPI properties
     const scores = {
       ph: this.scorePH(properties.ph),
       organic: this.scoreOrganicMatter(properties.organicMatter),
@@ -110,23 +110,23 @@ export class SoilAnalysisService {
 }
 ```
 
-**Données Fournies:**
-- Type de sol et classification
-- pH, matière organique, rétention d'eau
-- Indice de fertilité et risque d'érosion
-- Aptitude culturale par type de culture
-- Recommandations d'amélioration du sol
+**Data Provided:**
+- Soil type and classification
+- pH, organic matter, water retention
+- Fertility index and erosion risk
+- Crop suitability by crop type
+- Soil improvement recommendations
 
-**Utilisation dans ClimInvest:**
-- Scoring de crédit basé sur la qualité du sol
-- Recommandations agricoles personnalisées
-- Calcul des primes d'assurance ajustées
-- Évaluation du potentiel de rendement
+**Usage in ClimInvest:**
+- Soil quality-based credit scoring
+- Personalized agricultural recommendations
+- Adjusted insurance premium calculation
+- Yield potential assessment
 
-### 3. FloodClient - Détection d'Inondations
+### 3. FloodClient - Flood Detection
 
 ```typescript
-// Intégration OpenEPI FloodClient
+// OpenEPI FloodClient integration
 import { FloodClient } from 'openepi-client';
 
 const floodClient = new FloodClient({
@@ -136,10 +136,10 @@ const floodClient = new FloodClient({
 export class FloodMonitoringService {
   async monitorFloodRisk(lat: number, lon: number) {
     try {
-      // Surveillance continue des inondations
+      // Continuous flood monitoring
       const floodRisk = await floodClient.getFloodRisk(lat, lon);
       const historicalFloods = await floodClient.getHistoricalFloods(lat, lon);
-      
+
       return {
         current_risk_level: floodRisk.riskLevel,
         probability_7days: floodRisk.probability,
@@ -157,13 +157,13 @@ export class FloodMonitoringService {
   async checkAutomaticTriggers(policies: InsurancePolicy[]) {
     for (const policy of policies) {
       const floodData = await this.monitorFloodRisk(
-        policy.location.latitude, 
+        policy.location.latitude,
         policy.location.longitude
       );
 
-      if (floodData.current_risk_level === 'HIGH' && 
+      if (floodData.current_risk_level === 'HIGH' &&
           floodData.probability_7days > 0.7) {
-        
+
         await this.triggerFloodPayout(policy, floodData);
       }
     }
@@ -171,18 +171,18 @@ export class FloodMonitoringService {
 }
 ```
 
-**Données Fournies:**
-- Niveau de risque d'inondation en temps réel
-- Probabilité d'inondation sur 7 jours
-- Tendance du niveau d'eau
-- Historique des inondations par zone
-- Zones d'évacuation recommandées
+**Data Provided:**
+- Real-time flood risk level
+- 7-day flood probability
+- Water level trend
+- Historical floods by area
+- Recommended evacuation zones
 
-**Utilisation dans ClimInvest:**
-- Déclenchement automatique des indemnisations inondation
-- Alertes préventives aux agriculteurs
-- Cartographie des zones à risque
-- Ajustement des primes par zone géographique
+**Usage in ClimInvest:**
+- Automatic flood compensation triggering
+- Preventive alerts to farmers
+- Risk zone mapping
+- Geographic premium adjustment
 
 ### 4. CropHealthClient - Surveillance des Cultures
 
