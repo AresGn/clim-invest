@@ -7,12 +7,14 @@ import { COLORS, ACCESSIBILITY_SETTINGS, CROP_TYPES } from '../utils/constants';
 import { PremiumCalculator } from '../utils/premiumCalculator';
 import { RootState } from '../store/store';
 import * as Location from 'expo-location';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface ReferColleagueScreenProps {
   navigation: any;
 }
 
 export default function ReferColleagueScreen({ navigation }: ReferColleagueScreenProps) {
+  const { t } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const [selectedOption, setSelectedOption] = useState<'sms' | 'form' | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,25 +38,25 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission refusée', 'La localisation est nécessaire pour calculer la prime');
+        Alert.alert(t('referColleague.permissionDenied'), t('referColleague.locationRequired'));
         return;
       }
 
       const currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
     } catch (error) {
-      console.error('Erreur de géolocalisation:', error);
-      Alert.alert('Erreur', 'Impossible d\'obtenir la localisation');
+      console.error(t('referColleague.geoError'), error);
+      Alert.alert(t('common.error'), t('referColleague.locationError'));
     }
   };
 
   const handleSMSOption = () => {
     Alert.alert(
-      'Inscription par SMS',
-      'Votre collègue peut envoyer "MON ASSURANCE AGRICOLE" au 980 ou appeler directement le 980. Un de nos conseillers le prendra en charge.',
+      t('referColleague.smsRegistration'),
+      t('referColleague.smsInstructions'),
       [
         {
-          text: 'Appeler le 980',
+          text: t('referColleague.call980'),
           onPress: () => Linking.openURL('tel:980')
         },
         {
@@ -64,7 +66,7 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
             Linking.openURL(`sms:?body=${encodeURIComponent(message)}`);
           }
         },
-        { text: 'Annuler', style: 'cancel' }
+        { text: t('referColleague.cancel'), style: 'cancel' }
       ]
     );
   };
@@ -84,12 +86,12 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
 
   const handleFormSubmit = async () => {
     if (!formData.firstName || !formData.lastName || !formData.cropType || !formData.farmSize) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      Alert.alert(t('common.error'), t('referColleague.fillRequiredFields'));
       return;
     }
 
     if (!location) {
-      Alert.alert('Erreur', 'Localisation requise. Veuillez autoriser l\'accès à votre position.');
+      Alert.alert(t('common.error'), t('referColleague.locationRequiredError'));
       return;
     }
 
@@ -100,11 +102,15 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       Alert.alert(
-        'Inscription réussie !',
-        `${formData.firstName} ${formData.lastName} a été inscrit avec succès. Prime: ${premiumResult?.monthlyPremium} FCFA/mois. Le paiement de la première prime va être demandé.`,
+        t('referColleague.registrationSuccess'),
+        t('referColleague.registrationSuccessMessage', {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          premium: premiumResult?.monthlyPremium
+        }),
         [
           {
-            text: 'OK',
+            text: t('common.ok'),
             onPress: () => {
               // Ici on déclencherait normalement le processus de paiement Mobile Money
               Alert.alert(
@@ -117,7 +123,7 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
         ]
       );
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de créer l\'inscription. Veuillez réessayer.');
+      Alert.alert(t('common.error'), t('referColleague.registrationError'));
     } finally {
       setLoading(false);
     }
@@ -138,11 +144,10 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
 
           {/* Option SMS/Appel */}
           <AccessibleButton
-            title="📱 Inscription par SMS/Appel"
+            title={t('referColleague.smsOption')}
             onPress={() => setSelectedOption('sms')}
             style={styles.optionButton}
-            accessible={true}
-            accessibilityHint="Méthode simple par SMS ou appel téléphonique"
+            accessibilityHint={t('referColleague.smsOptionHint')}
           />
           
           <View style={styles.optionDescription}>
@@ -156,11 +161,10 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
 
           {/* Option Formulaire */}
           <AccessibleButton
-            title="📋 Inscription directe"
+            title={t('referColleague.directOption')}
             onPress={() => setSelectedOption('form')}
             style={styles.optionButton}
-            accessible={true}
-            accessibilityHint="Remplir le formulaire d'inscription maintenant"
+            accessibilityHint={t('referColleague.directOptionHint')}
           />
           
           <View style={styles.optionDescription}>
@@ -222,15 +226,13 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
             title="📱 Partager par SMS"
             onPress={handleSMSOption}
             style={styles.shareButton}
-            accessible={true}
             accessibilityHint="Partager les instructions par SMS"
           />
 
           <AccessibleButton
-            title="← Retour aux options"
+            title={t('referColleague.backToOptions')}
             onPress={() => setSelectedOption(null)}
             style={styles.backButton}
-            accessible={true}
           />
         </View>
       </ScrollView>
@@ -250,24 +252,24 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
       <View style={styles.form}>
         {/* Informations personnelles */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Prénom *</Text>
           <AccessibleInput
+            label={t('referColleague.firstName')}
             value={formData.firstName}
             onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
-            placeholder="Ex: Amadou"
+            placeholder={t('referColleague.firstNamePlaceholder')}
             style={styles.input}
-            accessibilityLabel="Prénom du collègue"
+            accessibilityLabel={t('referColleague.firstNameHint')}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Nom *</Text>
           <AccessibleInput
+            label={t('referColleague.lastName')}
             value={formData.lastName}
             onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
-            placeholder="Ex: Traoré"
+            placeholder={t('referColleague.lastNamePlaceholder')}
             style={styles.input}
-            accessibilityLabel="Nom du collègue"
+            accessibilityLabel={t('referColleague.lastNameHint')}
           />
         </View>
 
@@ -304,7 +306,6 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
                   styles.cropButtonText,
                   formData.cropType === crop.value && styles.cropButtonTextSelected
                 ]}
-                accessible={true}
                 accessibilityLabel={crop.accessibilityLabel}
               />
             ))}
@@ -313,14 +314,14 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
 
         {/* Taille de l'exploitation */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Taille de l'exploitation (hectares) *</Text>
           <AccessibleInput
+            label={t('referColleague.farmSize')}
             value={formData.farmSize}
             onChangeText={(text) => setFormData(prev => ({ ...prev, farmSize: text }))}
             placeholder="Ex: 2"
             keyboardType="numeric"
             style={styles.input}
-            accessibilityLabel="Taille de l'exploitation en hectares"
+            accessibilityLabel={t('referColleague.farmSizeHint')}
           />
         </View>
 
@@ -347,19 +348,17 @@ export default function ReferColleagueScreen({ navigation }: ReferColleagueScree
 
         {/* Boutons d'action */}
         <AccessibleButton
-          title={loading ? "Inscription en cours..." : "Inscrire et demander le paiement"}
+          title={loading ? t('referColleague.submitButtonLoading') : t('referColleague.submitButton')}
           onPress={handleFormSubmit}
           style={[styles.submitButton, loading && styles.submitButtonDisabled]}
           disabled={loading || !premiumResult || !location}
-          accessible={true}
-          accessibilityHint="Créer le compte et déclencher la demande de paiement"
+          accessibilityHint={t('referColleague.submitButtonHint')}
         />
 
         <AccessibleButton
-          title="← Retour aux options"
+          title={t('referColleague.backToOptions')}
           onPress={() => setSelectedOption(null)}
           style={styles.backButton}
-          accessible={true}
         />
       </View>
     </ScrollView>

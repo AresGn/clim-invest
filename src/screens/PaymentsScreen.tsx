@@ -61,7 +61,7 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Chrono prochaine échéance - synchronisé avec l'écran d'accueil */}
+        {/* Payment countdown - synchronized with home screen */}
         <PaymentCountdown
           paymentDate="2025-07-19" // Date du dernier paiement (19 juillet 2025)
           cycleDays={30} // Cycle de 30 jours

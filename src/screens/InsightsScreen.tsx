@@ -54,7 +54,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       setPriceData(prices);
       setCreditScore(credit);
     } catch (err) {
-      console.error('Erreur chargement données insights:', err);
+      console.error('Error loading insights data:', err);
       setError(t('insights.loadingError'));
     } finally {
       setLoading(false);
@@ -138,8 +138,8 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
     >
       {/* En-tête */}
       <View style={styles.header}>
-        <Text style={styles.title}>🔍 Analyses Agricoles</Text>
-        <Text style={styles.subtitle}>Données OpenEPI pour votre exploitation</Text>
+        <Text style={styles.title}>🔍 {t('insights.title')}</Text>
+        <Text style={styles.subtitle}>{t('insights.subtitle')}</Text>
       </View>
 
       {error && (
@@ -156,7 +156,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       {/* Score de crédit */}
       {creditScore && (
         <View style={styles.creditScoreCard}>
-          <Text style={styles.cardTitle}>💳 Score de Crédit Agricole</Text>
+          <Text style={styles.cardTitle}>💳 {t('insights.creditScore')}</Text>
           <View style={styles.scoreContainer}>
             <Text style={styles.scoreValue}>{creditScore.overallScore}/1000</Text>
             <View style={[
@@ -202,7 +202,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       {/* Données pédologiques */}
       {soilData && (
         <View style={styles.soilCard}>
-          <Text style={styles.cardTitle}>🌱 Analyse du Sol</Text>
+          <Text style={styles.cardTitle}>🌱 {t('insights.soilQuality')}</Text>
           <View style={styles.soilHeader}>
             <Text style={styles.soilQualityIcon}>
               {getSoilQualityIcon(soilData.suitability)}
@@ -241,7 +241,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       {/* Rendements historiques */}
       {yieldData && (
         <View style={styles.yieldCard}>
-          <Text style={styles.cardTitle}>📈 Rendements Historiques</Text>
+          <Text style={styles.cardTitle}>📈 {t('insights.yieldPrediction')}</Text>
           <View style={styles.yieldHeader}>
             <Text style={styles.yieldValue}>
               {yieldData.average_yield.toFixed(1)} t/ha
@@ -257,7 +257,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
           </Text>
           
           <View style={styles.yieldHistory}>
-            <Text style={styles.yieldHistoryTitle}>5 dernières années:</Text>
+            <Text style={styles.yieldHistoryTitle}>{t('insights.last5Years')}</Text>
             {yieldData.historical_yields.slice(-3).map((year, index) => (
               <View key={year.year} style={styles.yieldHistoryRow}>
                 <Text style={styles.yieldYear}>{year.year}</Text>
@@ -273,7 +273,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       {/* Prix du marché */}
       {priceData && (
         <View style={styles.priceCard}>
-          <Text style={styles.cardTitle}>💰 Prix du Marché</Text>
+          <Text style={styles.cardTitle}>💰 {t('insights.marketPrices')}</Text>
           <View style={styles.priceHeader}>
             <Text style={styles.currentPrice}>
               {priceData.current_price} {priceData.currency}/kg

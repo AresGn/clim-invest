@@ -11,6 +11,14 @@
 [![React Native](https://img.shields.io/badge/React%20Native-0.72-blue)](https://reactnative.dev/)
 [![OpenEPI](https://img.shields.io/badge/OpenEPI-Integrated-green)](https://openepi.io/)
 
+## 🔒 Security Notice
+
+**IMPORTANT**: This repository contains example API keys only. Never commit real API keys to version control.
+
+- Copy `.env.example` to `.env` and add your real API keys
+- The `.env` file is already in `.gitignore` to prevent accidental commits
+- Use environment variables in production deployments
+
 ## Project Overview
 
 ClimInvest is a revolutionary mobile application that democratizes access to agricultural insurance in West Africa. Using a mobile-first approach with SMS integration and phone calls, the application offers climate micro-insurance accessible to all farmers, even those without smartphones.

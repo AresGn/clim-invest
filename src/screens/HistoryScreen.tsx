@@ -84,17 +84,17 @@ export default function HistoryScreen({ navigation }: HistoryScreenProps) {
         ))}
 
         <View style={styles.summary}>
-          <Text style={styles.summaryTitle}>Résumé</Text>
+          <Text style={styles.summaryTitle}>{t('history.summary')}</Text>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Total des primes payées</Text>
+            <Text style={styles.summaryLabel}>{t('history.totalPremiumsPaid')}</Text>
             <Text style={styles.summaryValue}>10,000 FCFA</Text>
           </View>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Total des indemnisations</Text>
+            <Text style={styles.summaryLabel}>{t('history.totalCompensations')}</Text>
             <Text style={styles.summaryValue}>25,000 FCFA</Text>
           </View>
           <View style={[styles.summaryRow, styles.summaryTotal]}>
-            <Text style={styles.summaryTotalLabel}>Bénéfice net</Text>
+            <Text style={styles.summaryTotalLabel}>{t('history.netBenefit')}</Text>
             <Text style={styles.summaryTotalValue}>+15,000 FCFA</Text>
           </View>
         </View>
