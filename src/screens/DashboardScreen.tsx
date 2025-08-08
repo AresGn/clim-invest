@@ -8,6 +8,7 @@ import PaymentCountdown from '../components/common/PaymentCountdown';
 import DisasterHistorySection from '../components/dashboard/DisasterHistorySection';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState, AppDispatch } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface DashboardScreenProps {
   navigation: any;
@@ -73,6 +74,7 @@ const getWeatherValue = (weatherData: any, type: string): string => {
 
 export default function DashboardScreen({ navigation }: DashboardScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const { coverage, loading } = useSelector((state: RootState) => state.insurance);
   const [refreshing, setRefreshing] = useState(false);
@@ -131,11 +133,11 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          accessibilityLabel="Actualiser les données"
+          accessibilityLabel={t('dashboard.refreshData')}
         />
       }
       accessible={true}
-      accessibilityLabel="Tableau de bord agriculteur"
+      accessibilityLabel={t('dashboard.farmerDashboard')}
     >
       {/* En-tête utilisateur */}
       <View style={styles.header}>
@@ -145,29 +147,29 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
         >
           Bonjour {user.name} 👋
         </Text>
-        <Text 
+        <Text
           style={styles.statusText}
-          accessibilityLabel={`Statut couverture : ${coverage?.isActive ? 'Actif' : 'Inactif'}`}
+          accessibilityLabel={`Statut couverture : ${coverage?.isActive ? t('dashboard.protected') : t('dashboard.notProtected')}`}
         >
-          {coverage?.isActive ? '🛡️ Protégé' : '⚠️ Non protégé'}
+          {coverage?.isActive ? t('dashboard.protected') : t('dashboard.notProtected')}
         </Text>
       </View>
 
       {/* Carte de couverture */}
       {coverage && (
         <View style={styles.coverageCard}>
-          <Text style={styles.cardTitle}>Ma Couverture</Text>
+          <Text style={styles.cardTitle}>{t('dashboard.myCoverage')}</Text>
           <View style={styles.coverageDetails}>
             <View style={styles.coverageItem}>
-              <Text style={styles.coverageLabel}>Culture assurée</Text>
+              <Text style={styles.coverageLabel}>{t('dashboard.insuredCrop')}</Text>
               <Text style={styles.coverageValue}>
-                {coverage.cropType === 'maize' ? '🌽 Maïs' :
-                 coverage.cropType === 'cotton' ? '🌿 Coton' :
-                 coverage.cropType === 'groundnut' ? '🥜 Arachide' :
-                 coverage.cropType === 'cowpea' ? '🫘 Niébé' :
-                 coverage.cropType === 'rice' ? '🌾 Riz' :
-                 coverage.cropType === 'millet' ? '🌾 Mil' :
-                 coverage.cropType === 'sorghum' ? '🌾 Sorgho' :
+                {coverage.cropType === 'maize' ? `🌽 ${t('crops.maize')}` :
+                 coverage.cropType === 'cotton' ? `🌿 ${t('crops.cotton')}` :
+                 coverage.cropType === 'groundnut' ? `🥜 ${t('crops.groundnut')}` :
+                 coverage.cropType === 'cowpea' ? `🫘 ${t('crops.cowpea')}` :
+                 coverage.cropType === 'rice' ? `🌾 ${t('crops.rice')}` :
+                 coverage.cropType === 'millet' ? `🌾 ${t('crops.millet')}` :
+                 coverage.cropType === 'sorghum' ? `🌾 ${t('crops.sorghum')}` :
                  `🌱 ${coverage.cropType}`}
               </Text>
             </View>
@@ -241,30 +243,30 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
 
       {/* Action principale */}
       <View style={styles.actionsSection}>
-        <Text style={styles.sectionTitle}>🚨 Besoin d'aide ?</Text>
+        <Text style={styles.sectionTitle}>{t('dashboard.needHelp')}</Text>
 
         <View style={styles.actionGrid}>
           <AccessibleButton
-            title="🚨 Déclarer un Sinistre"
+            title={t('dashboard.declareClaim')}
             onPress={handleEmergencyClaim}
             style={styles.emergencyButton}
-            accessibilityHint="Signaler des dégâts sur vos cultures pour indemnisation"
+            accessibilityHint={t('dashboard.declareClaimHint')}
             accessible={true}
           />
 
           <AccessibleButton
-            title="📋 Souscrire à une autre assurance"
+            title={t('dashboard.subscribeInsurance')}
             onPress={handleSubscribeInsurance}
             style={styles.secondaryButton}
-            accessibilityHint="Ajouter une nouvelle assurance pour d'autres cultures"
+            accessibilityHint={t('dashboard.subscribeInsuranceHint')}
             accessible={true}
           />
 
           <AccessibleButton
-            title="👥 Inscrire un collègue"
+            title={t('dashboard.referColleague')}
             onPress={handleReferColleague}
             style={styles.tertiaryButton}
-            accessibilityHint="Aider un collègue agriculteur à s'inscrire"
+            accessibilityHint={t('dashboard.referColleagueHint')}
             accessible={true}
           />
         </View>

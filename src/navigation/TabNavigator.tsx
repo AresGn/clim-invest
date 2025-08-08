@@ -4,8 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
 
 import { COLORS } from '../utils/constants';
+import { useTranslation } from '../hooks/useTranslation';
 
-import TabBadge from '../components/common/TabBadge';
+import TabIcon from '../components/common/TabIcon';
 
 // Screens
 import DashboardScreen from '../screens/DashboardScreen';
@@ -62,17 +63,8 @@ function SettingsStack() {
   );
 }
 
-// Custom icon component with badges - consistent icons for better UX
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons = {
-    Dashboard: '🏠', // Always home icon
-    History: '📊', // Always chart icon
-    Insights: '🔍', // Always search/analysis icon
-    Payments: '💳', // Always card icon
-    Settings: '⚙️' // Always settings icon
-  };
-
-  // Notification simulation (replace with real data in production)
+// Notification simulation (replace with real data in production)
+const getNotificationCount = (tabName: string): number => {
   const notificationCounts = {
     Dashboard: 2, // Weather alerts
     History: 0,
@@ -80,35 +72,22 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
     Payments: 1, // Pending payment
     Settings: 0
   };
-
-  return (
-    <View style={{
-      alignItems: 'center',
-      justifyContent: 'center',
-      transform: focused ? [{ scale: 1.1 }] : [{ scale: 1 }],
-      position: 'relative'
-    }}>
-      <Text style={{
-        fontSize: 22,
-        opacity: focused ? 1 : 0.7
-      }}>
-        {icons[name as keyof typeof icons]}
-      </Text>
-
-      {/* Badge de notification */}
-      <TabBadge count={notificationCounts[name as keyof typeof notificationCounts]} />
-    </View>
-  );
-}
+  return notificationCounts[tabName as keyof typeof notificationCounts] || 0;
+};
 
 export default function TabNavigator() {
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused }) => (
-          <TabIcon name={route.name} focused={focused} />
+          <TabIcon
+            name={route.name}
+            focused={focused}
+            badgeCount={getNotificationCount(route.name)}
+          />
         ),
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.text.disabled,
@@ -138,44 +117,44 @@ export default function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen 
-        name="Dashboard" 
+      <Tab.Screen
+        name="Dashboard"
         component={DashboardStack}
         options={{
-          title: 'Accueil',
-          tabBarAccessibilityLabel: 'Accueil - Tableau de bord principal'
+          title: t('navigation.home'),
+          tabBarAccessibilityLabel: t('accessibility.homeTab')
         }}
       />
       <Tab.Screen
         name="History"
         component={HistoryScreen}
         options={{
-          title: 'Historique',
-          tabBarAccessibilityLabel: 'Historique des transactions'
+          title: t('navigation.history'),
+          tabBarAccessibilityLabel: t('accessibility.historyTab')
         }}
       />
       <Tab.Screen
         name="Insights"
         component={InsightsStack}
         options={{
-          title: 'Analyses',
-          tabBarAccessibilityLabel: 'Analyses agricoles et crédit'
+          title: t('navigation.insights'),
+          tabBarAccessibilityLabel: t('accessibility.insightsTab')
         }}
       />
-      <Tab.Screen 
-        name="Payments" 
+      <Tab.Screen
+        name="Payments"
         component={PaymentsScreen}
         options={{
-          title: 'Paiements',
-          tabBarAccessibilityLabel: 'Gestion des paiements'
+          title: t('navigation.payments'),
+          tabBarAccessibilityLabel: t('accessibility.paymentsTab')
         }}
       />
-      <Tab.Screen 
-        name="Settings" 
+      <Tab.Screen
+        name="Settings"
         component={SettingsStack}
         options={{
-          title: 'Paramètres',
-          tabBarAccessibilityLabel: 'Paramètres de l\'application'
+          title: t('navigation.settings'),
+          tabBarAccessibilityLabel: t('accessibility.settingsTab')
         }}
       />
     </Tab.Navigator>

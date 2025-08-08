@@ -5,9 +5,12 @@ import { registerUser } from '../store/slices/authSlice';
 import AccessibleInput from '../components/common/AccessibleInput';
 import AccessibleButton from '../components/common/AccessibleButton';
 import LocationPicker from '../components/common/LocationPicker';
-import { COLORS, CROP_TYPES, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import LanguageSelector from '../components/common/LanguageSelector';
+import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import { useCropTypes } from '../utils/cropTypes';
 import { validatePhone, validateRegistrationData } from '../utils/validation';
 import { AppDispatch } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface RegistrationScreenProps {
   navigation: any;
@@ -15,6 +18,8 @@ interface RegistrationScreenProps {
 
 export default function RegistrationScreen({ navigation }: RegistrationScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+  const cropTypes = useCropTypes();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -90,32 +95,39 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
         style={styles.header}
         accessible={true}
       >
-        Inscription Agriculteur
+        {t('auth.registration.title')}
       </Text>
 
       <Text style={styles.subtitle}>
-        Créez votre compte en quelques étapes simples
+        {t('auth.registration.subtitle')}
       </Text>
 
+      <LanguageSelector
+        style={styles.languageSection}
+        onLanguageChange={(language) => {
+          // Language change is handled automatically by the component
+        }}
+      />
+
       <AccessibleInput
-        label="Nom complet"
+        label={t('auth.registration.name')}
         value={formData.name}
         onChangeText={(name) => setFormData(prev => ({ ...prev, name }))}
-        placeholder="Entrez votre nom"
-        accessibilityLabel="Champ nom complet"
-        accessibilityHint="Saisissez votre nom et prénom"
+        placeholder={t('auth.registration.name')}
+        accessibilityLabel={t('auth.registration.name')}
+        accessibilityHint={t('auth.registration.name')}
         required
         error={errors.name}
       />
 
       <AccessibleInput
-        label="Numéro de téléphone"
+        label={t('auth.registration.phone')}
         value={formData.phone}
         onChangeText={(phone) => setFormData(prev => ({ ...prev, phone }))}
         placeholder="+226 XX XX XX XX"
         keyboardType="phone-pad"
-        accessibilityLabel="Champ numéro de téléphone"
-        accessibilityHint="Numéro pour recevoir SMS et paiements Mobile Money"
+        accessibilityLabel={t('auth.registration.phone')}
+        accessibilityHint={t('auth.registration.phone')}
         required
         error={errors.phone}
       />
@@ -127,12 +139,12 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
       />
 
       <View style={styles.cropSection}>
-        <Text style={styles.sectionTitle}>Type de culture principale</Text>
+        <Text style={styles.sectionTitle}>{t('auth.registration.cropType')}</Text>
         {errors.cropType && (
           <Text style={styles.errorText}>{errors.cropType}</Text>
         )}
         <View style={styles.cropGrid}>
-          {CROP_TYPES.map((crop) => (
+          {cropTypes.map((crop) => (
             <AccessibleButton
               key={crop.value}
               title={`${crop.icon} ${crop.label}`}
@@ -154,11 +166,11 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
       </View>
 
       <AccessibleButton
-        title="Créer mon compte"
+        title={t('auth.registration.registerButton')}
         onPress={handleRegistration}
         loading={loading}
         disabled={!formData.name || !formData.phone || !formData.cropType || !formData.location}
-        accessibilityHint="Créer votre compte et accéder au tableau de bord"
+        accessibilityHint={t('auth.registration.registerButton')}
         style={styles.primaryButton}
       />
     </ScrollView>
@@ -259,5 +271,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.error,
     marginBottom: 8,
+  },
+  languageSection: {
+    marginVertical: 16,
   },
 });

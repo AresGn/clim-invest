@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useAccessibility } from '../hooks/useAccessibility';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import { useTranslation } from '../hooks/useTranslation';
 
 const { width } = Dimensions.get('window');
 
@@ -12,32 +13,33 @@ interface OnboardingScreenProps {
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
   const { isScreenReaderEnabled, announceForAccessibility } = useAccessibility();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    announceForAccessibility("Bienvenue sur Clim-Invest. Protégez vos récoltes en 3 minutes");
-  }, []);
+    announceForAccessibility(t('onboarding.welcomeAnnouncement'));
+  }, [t]);
 
   const steps = [
     {
-      title: "Bienvenue sur Clim-Invest",
-      subtitle: "Micro-assurance climatique par SMS",
-      description: "Protection automatique contre sécheresses, inondations et tempêtes",
-      accessibilityLabel: "Écran de bienvenue. Clim-Invest offre une micro-assurance climatique accessible par SMS pour protéger vos cultures",
+      title: t('onboarding.step1.title'),
+      subtitle: t('onboarding.step1.subtitle'),
+      description: t('onboarding.step1.description'),
+      accessibilityLabel: t('onboarding.step1.accessibilityLabel'),
       emoji: "🌱"
     },
     {
-      title: "Simple comme un SMS",
-      subtitle: "Souscription en 3 minutes",
-      description: "Pas besoin de banque ou de paperasse. Tout se fait par téléphone mobile",
-      accessibilityLabel: "Processus simple. Souscrivez votre assurance en 3 minutes par SMS, sans compte bancaire requis",
+      title: t('onboarding.step2.title'),
+      subtitle: t('onboarding.step2.subtitle'),
+      description: t('onboarding.step2.description'),
+      accessibilityLabel: t('onboarding.step2.accessibilityLabel'),
       emoji: "📱"
     },
     {
-      title: "Protection Intelligente",
-      subtitle: "Données satellite en temps réel",
-      description: "Surveillance automatique de vos cultures et indemnisation rapide en cas de sinistre",
-      accessibilityLabel: "Protection intelligente utilisant des données satellite pour surveiller vos cultures automatiquement",
+      title: t('onboarding.step3.title'),
+      subtitle: t('onboarding.step3.subtitle'),
+      description: t('onboarding.step3.description'),
+      accessibilityLabel: t('onboarding.step3.accessibilityLabel'),
       emoji: "🛡️"
     }
   ];
@@ -63,7 +65,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     <View
       style={styles.container}
       accessible={true}
-      accessibilityLabel="Écran principal d'accueil"
+      accessibilityLabel={t('accessibility.welcomeScreen')}
     >
       {/* Indicateur de progression */}
       <View style={styles.progressContainer}>
@@ -114,28 +116,28 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       <View style={styles.buttonContainer}>
         {currentStep < steps.length - 1 && (
           <AccessibleButton
-            title="Passer"
+            title={t('onboarding.skip')}
             onPress={handleSkip}
             style={styles.skipButton}
             textStyle={styles.skipButtonText}
-            accessibilityHint="Passer l'introduction et aller directement à l'inscription"
+            accessibilityHint={t('onboarding.skip')}
           />
         )}
 
         <AccessibleButton
-          title={currentStep === steps.length - 1 ? "Commencer" : "Suivant"}
+          title={currentStep === steps.length - 1 ? t('onboarding.start') : t('onboarding.next')}
           onPress={handleNext}
-          accessibilityHint="Appuyez pour continuer vers l'étape suivante"
+          accessibilityHint={t('onboarding.next')}
           style={styles.primaryButton}
         />
 
         {currentStep === steps.length - 1 && (
           <AccessibleButton
-            title="J'ai déjà un compte"
+            title={t('onboarding.hasAccount')}
             onPress={handleLogin}
             style={styles.loginButton}
             textStyle={styles.loginButtonText}
-            accessibilityHint="Se connecter avec un compte existant"
+            accessibilityHint={t('onboarding.hasAccount')}
           />
         )}
       </View>

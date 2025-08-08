@@ -7,12 +7,14 @@ import { creditScoringService, FarmerCreditScore } from '../services/creditScori
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface InsightsScreenProps {
   navigation: any;
 }
 
 export default function InsightsScreen({ navigation }: InsightsScreenProps) {
+  const { t } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,7 +55,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       setCreditScore(credit);
     } catch (err) {
       console.error('Erreur chargement données insights:', err);
-      setError('Impossible de charger les analyses. Vérifiez votre connexion.');
+      setError(t('insights.loadingError'));
     } finally {
       setLoading(false);
     }
@@ -144,7 +146,7 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>⚠️ {error}</Text>
           <AccessibleButton
-            title="Réessayer"
+            title={t('insights.retry')}
             onPress={loadInsightsData}
             style={styles.retryButton}
           />
@@ -165,8 +167,8 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
                 styles.riskText,
                 { color: getRiskLevelColor(creditScore.riskLevel) }
               ]}>
-                {creditScore.riskLevel === 'low' ? 'Risque Faible' :
-                 creditScore.riskLevel === 'medium' ? 'Risque Modéré' : 'Risque Élevé'}
+                {creditScore.riskLevel === 'low' ? t('insights.lowRisk') :
+                 creditScore.riskLevel === 'medium' ? t('insights.mediumRisk') : t('insights.highRisk')}
               </Text>
             </View>
           </View>
@@ -207,11 +209,11 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
             </Text>
             <View>
               <Text style={styles.soilQualityText}>
-                Qualité: {soilData.suitability === 'excellent' ? 'Excellente' :
-                         soilData.suitability === 'good' ? 'Bonne' :
-                         soilData.suitability === 'moderate' ? 'Modérée' : 'Faible'}
+                {t('insights.quality')}: {soilData.suitability === 'excellent' ? t('insights.excellent') :
+                         soilData.suitability === 'good' ? t('insights.good') :
+                         soilData.suitability === 'moderate' ? t('insights.moderate') : t('insights.poor')}
               </Text>
-              <Text style={styles.soilScore}>Score: {soilData.quality_score}/100</Text>
+              <Text style={styles.soilScore}>{t('insights.score')}: {soilData.quality_score}/100</Text>
             </View>
           </View>
 
@@ -306,17 +308,17 @@ export default function InsightsScreen({ navigation }: InsightsScreenProps) {
       {/* Actions */}
       <View style={styles.actionsSection}>
         <AccessibleButton
-          title="📋 Demander un Crédit"
+          title={t('insights.requestCredit')}
           onPress={() => navigation.navigate('CreditApplication')}
           style={styles.creditButton}
-          accessibilityHint="Faire une demande de crédit agricole"
+          accessibilityHint={t('insights.requestCreditHint')}
         />
-        
+
         <AccessibleButton
-          title="📊 Voir Plus d'Analyses"
+          title={t('insights.viewMoreAnalytics')}
           onPress={() => navigation.navigate('DetailedAnalytics')}
           style={styles.analyticsButton}
-          accessibilityHint="Voir des analyses détaillées"
+          accessibilityHint={t('insights.viewMoreAnalyticsHint')}
         />
       </View>
     </ScrollView>

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 // Navigation
 import TabNavigator from './TabNavigator';
@@ -16,6 +17,7 @@ const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { t } = useTranslation();
 
   return (
     <NavigationContainer>
@@ -33,16 +35,16 @@ export default function AppNavigator() {
               name="Onboarding"
               component={OnboardingScreen}
               options={{
-                title: 'Bienvenue',
-                accessibilityLabel: 'Écran de bienvenue'
+                title: t('navigation.welcome'),
+                accessibilityLabel: t('accessibility.welcomeScreen')
               }}
             />
             <Stack.Screen
               name="Login"
               component={LoginScreen}
               options={{
-                title: 'Connexion',
-                accessibilityLabel: 'Écran de connexion',
+                title: t('navigation.login'),
+                accessibilityLabel: t('accessibility.loginScreen'),
                 headerShown: true,
                 headerBackTitleVisible: false,
               }}
@@ -51,8 +53,8 @@ export default function AppNavigator() {
               name="Registration"
               component={RegistrationScreen}
               options={{
-                title: 'Inscription',
-                accessibilityLabel: 'Écran d\'inscription',
+                title: t('navigation.registration'),
+                accessibilityLabel: t('accessibility.registrationScreen'),
                 headerShown: true,
                 headerBackTitleVisible: false,
               }}
@@ -66,7 +68,7 @@ export default function AppNavigator() {
             options={{
               headerShown: false,
               title: 'Clim-Invest',
-              accessibilityLabel: 'Application principale'
+              accessibilityLabel: t('accessibility.mainApp')
             }}
           />
         )}

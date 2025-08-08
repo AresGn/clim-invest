@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import AccessibleButton from './AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../../utils/constants';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface LocationPickerProps {
   onLocationSelected: (location: { latitude: number; longitude: number; region: string }) => void;
@@ -33,6 +34,7 @@ const REGION_COORDINATES: { [key: string]: { lat: number; lon: number } } = {
 export default function LocationPicker({ onLocationSelected, currentLocation, style }: LocationPickerProps) {
   const [loading, setLoading] = useState(false);
   const [showManualPicker, setShowManualPicker] = useState(false);
+  const { t } = useTranslation();
 
   const checkLocationServices = async (): Promise<boolean> => {
     try {
@@ -199,7 +201,7 @@ export default function LocationPicker({ onLocationSelected, currentLocation, st
   if (showManualPicker) {
     return (
       <View style={[styles.container, style]}>
-        <Text style={styles.title}>Sélectionnez votre région</Text>
+        <Text style={styles.title}>{t('location.selectRegion')}</Text>
         <View style={styles.regionsGrid}>
           {BENIN_REGIONS.map((region) => (
             <AccessibleButton
@@ -213,10 +215,10 @@ export default function LocationPicker({ onLocationSelected, currentLocation, st
           ))}
         </View>
         <AccessibleButton
-          title="Utiliser le GPS"
+          title={t('location.useGPS')}
           onPress={() => setShowManualPicker(false)}
           style={styles.gpsButton}
-          accessibilityHint="Revenir à la localisation GPS"
+          accessibilityHint={t('location.useGPS')}
         />
       </View>
     );
@@ -224,7 +226,7 @@ export default function LocationPicker({ onLocationSelected, currentLocation, st
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.sectionTitle}>Localisation de votre exploitation</Text>
+      <Text style={styles.sectionTitle}>{t('location.title')}</Text>
       
       {currentLocation ? (
         <View style={styles.locationDisplay}>
@@ -235,16 +237,16 @@ export default function LocationPicker({ onLocationSelected, currentLocation, st
             {currentLocation.latitude.toFixed(4)}, {currentLocation.longitude.toFixed(4)}
           </Text>
           <AccessibleButton
-            title="Modifier"
+            title={t('location.modify')}
             onPress={getCurrentLocation}
             style={styles.modifyButton}
-            accessibilityHint="Modifier votre localisation"
+            accessibilityHint={t('location.modify')}
           />
         </View>
       ) : (
         <View style={styles.locationActions}>
           <AccessibleButton
-            title={loading ? "Localisation en cours..." : "📍 Obtenir ma position GPS"}
+            title={loading ? t('location.gettingLocation') : t('location.getCurrentLocation')}
             onPress={getCurrentLocation}
             loading={loading}
             disabled={loading}
@@ -253,7 +255,7 @@ export default function LocationPicker({ onLocationSelected, currentLocation, st
           />
           
           <AccessibleButton
-            title="Sélectionner manuellement"
+            title={t('location.selectManually')}
             onPress={() => setShowManualPicker(true)}
             style={styles.manualButton}
             accessibilityHint="Choisir votre région dans une liste"

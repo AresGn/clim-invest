@@ -2,38 +2,41 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface HistoryScreenProps {
   navigation: any;
 }
 
 export default function HistoryScreen({ navigation }: HistoryScreenProps) {
+  const { t } = useTranslation();
+
   const mockHistory = [
     {
       id: '1',
       type: 'payment',
-      title: 'Prime d\'assurance - Janvier 2025',
+      title: `${t('history.insurancePremium')} - ${t('history.january2025')}`,
       amount: '5,000 FCFA',
       date: '2025-01-15',
-      status: 'Payé',
+      status: t('history.paid'),
       icon: '💰'
     },
     {
       id: '2',
       type: 'claim',
-      title: 'Réclamation - Sécheresse',
+      title: t('history.droughtClaim'),
       amount: '25,000 FCFA',
       date: '2024-12-20',
-      status: 'Approuvé',
+      status: t('history.approved'),
       icon: '🌾'
     },
     {
       id: '3',
       type: 'payment',
-      title: 'Prime d\'assurance - Décembre 2024',
+      title: `${t('history.insurancePremium')} - ${t('history.december2024')}`,
       amount: '5,000 FCFA',
       date: '2024-12-15',
-      status: 'Payé',
+      status: t('history.paid'),
       icon: '💰'
     }
   ];
@@ -71,8 +74,8 @@ export default function HistoryScreen({ navigation }: HistoryScreenProps) {
               <Text style={styles.itemAmount}>{item.amount}</Text>
               <Text style={[
                 styles.itemStatus,
-                item.status === 'Payé' && styles.statusPaid,
-                item.status === 'Approuvé' && styles.statusApproved
+                item.status === t('history.paid') && styles.statusPaid,
+                item.status === t('history.approved') && styles.statusApproved
               ]}>
                 {item.status}
               </Text>

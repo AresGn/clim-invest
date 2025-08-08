@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../../utils/constants';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface PaymentCountdownProps {
   paymentDate: string; // Date du dernier paiement (format ISO)
@@ -8,6 +9,7 @@ interface PaymentCountdownProps {
 }
 
 export default function PaymentCountdown({ paymentDate, cycleDays = 30 }: PaymentCountdownProps) {
+  const { t } = useTranslation();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -51,37 +53,37 @@ export default function PaymentCountdown({ paymentDate, cycleDays = 30 }: Paymen
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        {isOverdue ? '⚠️ Échéance dépassée' : '⏰ Prochaine échéance'}
+        {isOverdue ? t('payments.overdue') : t('payments.nextDue')}
       </Text>
-      
+
       {!isOverdue ? (
         <View style={styles.countdownContainer}>
           <View style={styles.timeBlock}>
             <Text style={styles.timeNumber}>{timeLeft.days}</Text>
-            <Text style={styles.timeLabel}>Jours</Text>
+            <Text style={styles.timeLabel}>{t('payments.days')}</Text>
           </View>
-          
+
           <Text style={styles.separator}>:</Text>
-          
+
           <View style={styles.timeBlock}>
             <Text style={styles.timeNumber}>{timeLeft.hours.toString().padStart(2, '0')}</Text>
-            <Text style={styles.timeLabel}>Heures</Text>
+            <Text style={styles.timeLabel}>{t('payments.hours')}</Text>
           </View>
-          
+
           <Text style={styles.separator}>:</Text>
-          
+
           <View style={styles.timeBlock}>
             <Text style={styles.timeNumber}>{timeLeft.minutes.toString().padStart(2, '0')}</Text>
-            <Text style={styles.timeLabel}>Min</Text>
+            <Text style={styles.timeLabel}>{t('payments.minutes')}</Text>
           </View>
         </View>
       ) : (
         <View style={styles.overdueContainer}>
           <Text style={styles.overdueText}>
-            💳 Votre paiement est en retard
+            {t('payments.paymentOverdue')}
           </Text>
           <Text style={styles.overdueSubtext}>
-            Renouvelez votre couverture rapidement
+            {t('payments.renewCoverage')}
           </Text>
         </View>
       )}

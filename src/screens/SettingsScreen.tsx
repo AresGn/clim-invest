@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, Modal } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import AccessibleButton from '../components/common/AccessibleButton';
+import LanguageSelector from '../components/common/LanguageSelector';
+import SettingsIcon from '../components/common/SettingsIcon';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState, AppDispatch } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SettingsScreenProps {
   navigation: any;
@@ -13,15 +16,17 @@ interface SettingsScreenProps {
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
+  const { t } = useTranslation();
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
-      'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      t('settings.logout'),
+      t('settings.logoutConfirmation'),
       [
-        { text: 'Annuler', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Déconnexion',
+          text: t('settings.logout'),
           style: 'destructive',
           onPress: () => dispatch(logout())
         }
@@ -32,60 +37,60 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const settingsOptions = [
     {
       id: 'profile',
-      title: 'Profil',
-      subtitle: 'Modifier vos informations personnelles',
-      icon: '👤',
-      onPress: () => Alert.alert('Profil', 'Fonctionnalité en développement')
+      title: t('settings.profile'),
+      subtitle: t('settings.profileSubtitle'),
+      icon: 'profile',
+      onPress: () => Alert.alert(t('settings.profile'), t('common.developmentFeature'))
     },
     {
       id: 'notifications',
-      title: 'Notifications',
-      subtitle: 'Gérer les alertes SMS et push',
-      icon: '🔔',
-      onPress: () => Alert.alert('Notifications', 'Fonctionnalité en développement')
+      title: t('settings.notifications'),
+      subtitle: t('settings.notificationsSubtitle'),
+      icon: 'notifications',
+      onPress: () => Alert.alert(t('settings.notifications'), t('common.developmentFeature'))
     },
     {
       id: 'security',
-      title: 'Sécurité',
-      subtitle: 'Mot de passe et authentification',
-      icon: '🔒',
-      onPress: () => Alert.alert('Sécurité', 'Fonctionnalité en développement')
+      title: t('settings.security'),
+      subtitle: t('settings.securitySubtitle'),
+      icon: 'security',
+      onPress: () => Alert.alert(t('settings.security'), t('common.developmentFeature'))
     },
     {
       id: 'language',
-      title: 'Langue',
-      subtitle: 'Français, Mooré, Dioula',
-      icon: '🌍',
-      onPress: () => Alert.alert('Langue', 'Fonctionnalité en développement')
+      title: t('settings.language'),
+      subtitle: t('settings.languageSubtitle'),
+      icon: 'language',
+      onPress: () => setShowLanguageModal(true)
     },
     {
       id: 'help',
-      title: 'Aide & Support',
-      subtitle: 'FAQ, Contact, Tutoriels',
+      title: t('settings.help'),
+      subtitle: t('settings.helpSubtitle'),
       icon: '❓',
-      onPress: () => Alert.alert('Aide', 'Contactez-nous au +226 XX XX XX XX')
+      onPress: () => Alert.alert(t('settings.help'), t('settings.helpMessage'))
     },
     {
       id: 'data_usage',
-      title: 'Sources de Données',
-      subtitle: 'Statut API et qualité des données',
+      title: t('settings.dataUsage'),
+      subtitle: t('settings.dataUsageSubtitle'),
       icon: '📊',
-      onPress: () => Alert.alert('Sources de Données', 'OpenEPI: ✅ Actif\nNASA POWER: ✅ Actif\nSoilGrids: ⚠️ Mode de secours')
+      onPress: () => Alert.alert(t('settings.dataUsage'), t('settings.dataUsageMessage'))
     },
     {
       id: 'about',
-      title: 'À Propos',
-      subtitle: 'Version 1.0.0 - Hybrid OpenEPI',
+      title: t('settings.aboutTitle'),
+      subtitle: t('settings.versionText'),
       icon: 'ℹ️',
-      onPress: () => Alert.alert('À Propos', 'ClimInvest v1.0.0\nAssurance Agricole Intelligente\nPowered by OpenEPI hybrid service')
+      onPress: () => Alert.alert(t('settings.aboutTitle'), t('settings.aboutMessage'))
     }
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Paramètres</Text>
-        <Text style={styles.subtitle}>Gérez votre compte et vos préférences</Text>
+        <Text style={styles.title}>{t('settings.title')}</Text>
+        <Text style={styles.subtitle}>{t('settings.subtitle')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -102,7 +107,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
               <Text style={styles.userPhone}>{user.phone}</Text>
               <Text style={styles.userLocation}>📍 {user.location.region}</Text>
               <View style={styles.statusBadge}>
-                <Text style={styles.statusText}>✅ Active</Text>
+                <Text style={styles.statusText}>✅ {t('settings.userStatus')}</Text>
               </View>
             </View>
           </View>
@@ -111,29 +116,17 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         {/* Settings options */}
         <View style={styles.settingsSection}>
           {settingsOptions.map((option, index) => (
-            <View key={option.id} style={[
-              styles.settingItemContainer,
-              index === settingsOptions.length - 1 && styles.lastSettingItem
-            ]}>
+            <View key={option.id} style={styles.settingItemContainer}>
               <AccessibleButton
-                title=""
+                title={option.title}
                 onPress={option.onPress}
-                style={styles.settingItem}
+                style={styles.settingButton}
+                textStyle={styles.settingButtonText}
                 accessibilityLabel={`${option.title}: ${option.subtitle}`}
                 accessibilityHint={`Ouvrir ${option.title}`}
                 accessibilityRole="button"
-              >
-                <View style={styles.settingItemContent}>
-                  <View style={styles.settingItemLeft}>
-                    <Text style={styles.settingIcon}>{option.icon}</Text>
-                    <View style={styles.settingTextContainer}>
-                      <Text style={styles.settingTitle}>{option.title}</Text>
-                      <Text style={styles.settingSubtitle}>{option.subtitle}</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.settingArrow}>›</Text>
-                </View>
-              </AccessibleButton>
+              />
+              <Text style={styles.settingSubtitleText}>{option.subtitle}</Text>
             </View>
           ))}
         </View>
@@ -141,7 +134,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         {/* Logout button */}
         <View style={styles.logoutSection}>
           <AccessibleButton
-            title="🚪 Déconnexion"
+            title={`${t('settings.logout')}`}
             onPress={handleLogout}
             style={styles.logoutButton}
             textStyle={styles.logoutButtonText}
@@ -152,13 +145,43 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         {/* Legal information */}
         <View style={styles.legalSection}>
           <Text style={styles.legalText}>
-            En utilisant ClimInvest, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.
+            {t('settings.legalText')}
           </Text>
           <Text style={styles.versionText}>
-            Version 1.0.0 - Hybrid OpenEPI • © 2025 ClimInvest
+            {t('settings.versionText')}
           </Text>
         </View>
       </ScrollView>
+
+      {/* Language Selection Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showLanguageModal}
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {t('settings.language')}
+            </Text>
+
+            <LanguageSelector
+              showLabel={false}
+              onLanguageChange={() => {
+                setShowLanguageModal(false);
+              }}
+            />
+
+            <AccessibleButton
+              title={t('common.close')}
+              onPress={() => setShowLanguageModal(false)}
+              style={styles.closeButton}
+              textStyle={styles.closeButtonText}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -252,60 +275,32 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   settingItemContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.text.disabled + '30',
-    marginBottom: 0,
+    marginBottom: 12,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  settingItem: {
-    backgroundColor: 'transparent',
-    borderRadius: 0,
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    elevation: 0,
-    shadowOpacity: 0,
-    marginBottom: 0,
-    minHeight: 60,
-  },
-  settingItemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  settingButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: COLORS.surface,
-    borderRadius: 0,
+    borderRadius: 6,
+    marginBottom: 8,
   },
-  settingItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  settingIcon: {
-    fontSize: 24,
-    marginRight: 16,
-  },
-  settingTextContainer: {
-    flex: 1,
-  },
-  settingTitle: {
+  settingButtonText: {
+    color: COLORS.text.inverse,
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text.primary,
-    marginBottom: 4,
+    textAlign: 'left',
   },
-  settingSubtitle: {
+  settingSubtitleText: {
     fontSize: 14,
     color: COLORS.text.secondary,
     lineHeight: 18,
   },
-  settingArrow: {
-    fontSize: 20,
-    color: COLORS.text.secondary,
-    fontWeight: '300',
-  },
-  lastSettingItem: {
-    borderBottomWidth: 0,
-  },
+
 
   logoutSection: {
     marginBottom: 24,
@@ -333,5 +328,32 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.text.disabled,
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    maxWidth: 300,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: COLORS.text.disabled,
+    marginTop: 12,
+  },
+  closeButtonText: {
+    color: COLORS.text.primary,
   },
 });

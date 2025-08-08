@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { useSelector } from 'react-redux';
 import AccessibleButton from '../components/common/AccessibleButton';
 import PaymentCountdown from '../components/common/PaymentCountdown';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface PaymentsScreenProps {
   navigation: any;
@@ -13,17 +14,18 @@ interface PaymentsScreenProps {
 export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
   const [loading, setLoading] = useState(false);
   const { coverage } = useSelector((state: RootState) => state.insurance);
+  const { t } = useTranslation();
 
   const handlePayment = async (method: string) => {
     setLoading(true);
-    
+
     // Simulation de paiement
     setTimeout(() => {
       setLoading(false);
       Alert.alert(
-        'Paiement initié',
-        `Votre paiement via ${method} a été initié. Vous recevrez un SMS de confirmation.`,
-        [{ text: 'OK' }]
+        t('payments.paymentInitiated'),
+        t('payments.paymentConfirmation', { method }),
+        [{ text: t('common.ok') }]
       );
     }, 2000);
   };
@@ -31,31 +33,31 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
   const paymentMethods = [
     {
       id: 'orange',
-      name: 'Orange Money',
-      icon: '🟠',
-      description: 'Paiement via Orange Money',
-      fee: '0 FCFA'
+      name: t('payments.orangeMoney'),
+      image: require('../../assets/logo/orange.png'),
+      description: t('payments.orangeDescription'),
+      fee: t('payments.noFees')
     },
     {
       id: 'moov',
-      name: 'Moov Money',
-      icon: '🔵',
-      description: 'Paiement via Moov Money',
-      fee: '0 FCFA'
+      name: t('payments.moovMoney'),
+      image: require('../../assets/logo/moov.png'),
+      description: t('payments.moovDescription'),
+      fee: t('payments.noFees')
     },
     {
       id: 'wave',
-      name: 'Wave',
-      icon: '💙',
-      description: 'Paiement via Wave',
-      fee: '0 FCFA'
+      name: t('payments.wave'),
+      image: require('../../assets/logo/wave.png'),
+      description: t('payments.waveDescription'),
+      fee: t('payments.noFees')
     }
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Paiements</Text>
+        <Text style={styles.title}>{t('payments.title')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -67,38 +69,38 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
 
         {/* Informations de paiement */}
         <View style={styles.paymentInfo}>
-          <Text style={styles.sectionTitle}>Prime mensuelle</Text>
+          <Text style={styles.sectionTitle}>{t('payments.monthlyPremium')}</Text>
           <View style={styles.amountContainer}>
             <Text style={styles.amount}>
               {coverage?.premium?.toLocaleString() || '800'} FCFA
             </Text>
             <Text style={styles.amountDescription}>
-              Prime d'assurance pour votre exploitation de {coverage?.farmSize || 2} hectares
+              {t('payments.premiumDescription', { farmSize: coverage?.farmSize || 2 })}
             </Text>
           </View>
         </View>
 
         {/* Méthodes de paiement */}
         <View style={styles.paymentMethods}>
-          <Text style={styles.sectionTitle}>Choisir une méthode de paiement</Text>
+          <Text style={styles.sectionTitle}>{t('payments.choosePaymentMethod')}</Text>
           
           {paymentMethods.map((method) => (
             <View key={method.id} style={styles.paymentMethod}>
               <View style={styles.methodInfo}>
-                <Text style={styles.methodIcon}>{method.icon}</Text>
+                <Image source={method.image} style={styles.methodIcon} resizeMode="contain" />
                 <View style={styles.methodDetails}>
                   <Text style={styles.methodName}>{method.name}</Text>
                   <Text style={styles.methodDescription}>{method.description}</Text>
-                  <Text style={styles.methodFee}>Frais: {method.fee}</Text>
+                  <Text style={styles.methodFee}>{t('payments.fees')}: {method.fee}</Text>
                 </View>
               </View>
-              
+
               <AccessibleButton
-                title="Payer"
+                title={t('payments.payButton')}
                 onPress={() => handlePayment(method.name)}
                 loading={loading}
                 style={styles.payButton}
-                accessibilityHint={`Payer avec ${method.name}`}
+                accessibilityHint={`${t('payments.payButton')} ${method.name}`}
               />
             </View>
           ))}
@@ -106,8 +108,8 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
 
         {/* Historique des paiements */}
         <View style={styles.recentPayments}>
-          <Text style={styles.sectionTitle}>Paiements récents</Text>
-          
+          <Text style={styles.sectionTitle}>{t('payments.recentPayments')}</Text>
+
           <View style={styles.paymentHistory}>
             <View style={styles.historyItem}>
               <View style={styles.historyDate}>
@@ -115,8 +117,8 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
                 <Text style={styles.historyMonth}>JUL</Text>
               </View>
               <View style={styles.historyDetails}>
-                <Text style={styles.historyTitle}>Prime d'assurance</Text>
-                <Text style={styles.historyMethod}>Orange Money</Text>
+                <Text style={styles.historyTitle}>{t('payments.insurancePremium')}</Text>
+                <Text style={styles.historyMethod}>{t('payments.orangeMoney')}</Text>
               </View>
               <Text style={styles.historyAmount}>
                 {coverage?.premium?.toLocaleString() || '800'} FCFA
@@ -129,8 +131,8 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
                 <Text style={styles.historyMonth}>JUN</Text>
               </View>
               <View style={styles.historyDetails}>
-                <Text style={styles.historyTitle}>Prime d'assurance</Text>
-                <Text style={styles.historyMethod}>Wave</Text>
+                <Text style={styles.historyTitle}>{t('payments.insurancePremium')}</Text>
+                <Text style={styles.historyMethod}>{t('payments.wave')}</Text>
               </View>
               <Text style={styles.historyAmount}>
                 {coverage?.premium?.toLocaleString() || '800'} FCFA
@@ -141,12 +143,9 @@ export default function PaymentsScreen({ navigation }: PaymentsScreenProps) {
 
         {/* Informations importantes */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoTitle}>💡 Informations importantes</Text>
+          <Text style={styles.infoTitle}>{t('payments.importantInfo')}</Text>
           <Text style={styles.infoText}>
-            • Votre couverture reste active tant que vos primes sont à jour{'\n'}
-            • Les paiements sont sécurisés et cryptés{'\n'}
-            • Vous recevrez un SMS de confirmation après chaque paiement{'\n'}
-            • En cas de retard, vous avez 7 jours de grâce
+            {t('payments.infoText')}
           </Text>
         </View>
       </ScrollView>
@@ -237,7 +236,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   methodIcon: {
-    fontSize: 32,
+    width: 40,
+    height: 40,
     marginRight: 16,
   },
   methodDetails: {

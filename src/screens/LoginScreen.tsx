@@ -6,6 +6,7 @@ import AccessibleInput from '../components/common/AccessibleInput';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { AppDispatch } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface LoginScreenProps {
   navigation: any;
@@ -13,6 +14,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,14 +26,14 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   const handleLogin = async () => {
     setError('');
-    
+
     if (!phone.trim()) {
-      setError('Le numéro de téléphone est requis');
+      setError(t('auth.login.phoneRequired'));
       return;
     }
-    
+
     if (!validatePhone(phone)) {
-      setError('Format invalide. Utilisez: +226 XX XX XX XX');
+      setError(t('auth.login.invalidFormat'));
       return;
     }
 
@@ -40,7 +42,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       await dispatch(loginUser({ phone }));
       // La navigation sera gérée automatiquement par AppNavigator
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de se connecter. Veuillez réessayer.');
+      Alert.alert(t('common.error'), t('auth.login.loginError'));
     } finally {
       setLoading(false);
     }
@@ -54,42 +56,42 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.logo}>🌱</Text>
-        <Text style={styles.title}>Clim-Invest</Text>
-        <Text style={styles.subtitle}>Connectez-vous à votre compte</Text>
+        <Text style={styles.title}>{t('auth.login.appTitle')}</Text>
+        <Text style={styles.subtitle}>{t('auth.login.appSubtitle')}</Text>
       </View>
 
       <View style={styles.form}>
         <AccessibleInput
-          label="Numéro de téléphone"
+          label={t('auth.login.phone')}
           value={phone}
           onChangeText={setPhone}
-          placeholder="+226 XX XX XX XX"
+          placeholder={t('auth.login.phonePlaceholder')}
           keyboardType="phone-pad"
-          accessibilityLabel="Champ numéro de téléphone pour connexion"
-          accessibilityHint="Entrez votre numéro de téléphone pour vous connecter"
+          accessibilityLabel={t('auth.login.phone')}
+          accessibilityHint={t('auth.login.phone')}
           required
           error={error}
         />
 
         <AccessibleButton
-          title="Se connecter"
+          title={t('auth.login.loginButton')}
           onPress={handleLogin}
           loading={loading}
           disabled={!phone.trim()}
-          accessibilityHint="Se connecter avec votre numéro de téléphone"
+          accessibilityHint={t('auth.login.loginButton')}
           style={styles.loginButton}
         />
 
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>ou</Text>
+          <Text style={styles.dividerText}>{t('auth.login.dividerText')}</Text>
           <View style={styles.dividerLine} />
         </View>
 
         <AccessibleButton
-          title="Créer un nouveau compte"
+          title={t('auth.login.createAccount')}
           onPress={handleRegister}
-          accessibilityHint="Créer un nouveau compte agriculteur"
+          accessibilityHint={t('auth.login.createAccount')}
           style={styles.registerButton}
           textStyle={styles.registerButtonText}
         />
@@ -97,10 +99,10 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Micro-assurance climatique pour agriculteurs
+          {t('auth.login.footerText')}
         </Text>
         <Text style={styles.footerSubtext}>
-          Protection automatique contre les risques climatiques
+          {t('auth.login.footerSubtext')}
         </Text>
       </View>
     </View>
