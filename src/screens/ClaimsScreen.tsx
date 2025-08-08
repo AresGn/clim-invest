@@ -6,6 +6,7 @@ import AccessibleButton from '../components/common/AccessibleButton';
 import AccessibleInput from '../components/common/AccessibleInput';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState, AppDispatch } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface ClaimsScreenProps {
   navigation: any;
@@ -14,9 +15,10 @@ interface ClaimsScreenProps {
 
 export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const { coverage, loading } = useSelector((state: RootState) => state.insurance);
-  
+
   const [claimType, setClaimType] = useState('');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -24,25 +26,25 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
   const isEmergency = route?.params?.emergency || false;
 
   const claimTypes = [
-    { value: 'drought', label: 'Sécheresse', icon: '🌵', description: 'Manque de pluie prolongé' },
-    { value: 'flood', label: 'Inondation', icon: '🌊', description: 'Excès d\'eau sur les cultures' },
-    { value: 'storm', label: 'Tempête', icon: '⛈️', description: 'Vents violents, grêle' },
-    { value: 'other', label: 'Autre', icon: '❓', description: 'Autre type de sinistre' }
+    { value: 'drought', label: t('claims.droughtLabel'), icon: '🌵', description: t('claims.droughtDescription') },
+    { value: 'flood', label: t('claims.floodLabel'), icon: '🌊', description: t('claims.floodDescription') },
+    { value: 'storm', label: t('claims.stormLabel'), icon: '⛈️', description: t('claims.stormDescription') },
+    { value: 'other', label: t('claims.otherLabel'), icon: '❓', description: t('claims.otherDescription') }
   ];
 
   const handleSubmitClaim = async () => {
     if (!claimType) {
-      Alert.alert('Erreur', 'Veuillez sélectionner un type de sinistre');
+      Alert.alert(t('common.error'), t('claims.selectTypeError'));
       return;
     }
 
     if (!description.trim()) {
-      Alert.alert('Erreur', 'Veuillez décrire le sinistre');
+      Alert.alert(t('common.error'), t('claims.describeError'));
       return;
     }
 
     if (!coverage) {
-      Alert.alert('Erreur', 'Aucune couverture active trouvée');
+      Alert.alert(t('common.error'), t('claims.noCoverageError'));
       return;
     }
 
@@ -57,14 +59,14 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
       }));
 
       Alert.alert(
-        'Réclamation soumise',
-        'Votre réclamation a été soumise avec succès. Vous recevrez une réponse sous 48h.',
+        t('claims.claimSubmitted'),
+        t('claims.claimSubmittedMessage'),
         [
-          { text: 'OK', onPress: () => navigation.goBack() }
+          { text: t('common.ok'), onPress: () => navigation.goBack() }
         ]
       );
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de soumettre la réclamation. Veuillez réessayer.');
+      Alert.alert(t('common.error'), t('claims.submitError'));
     } finally {
       setSubmitting(false);
     }
@@ -74,7 +76,7 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>
-          {isEmergency ? '🚨 Sinistre d\'urgence' : '🚨 Déclarer un sinistre'}
+          {isEmergency ? t('claims.emergencyTitle') : t('claims.title')}
         </Text>
       </View>
 
@@ -129,12 +131,12 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
         {/* Description du sinistre */}
         <View style={styles.descriptionSection}>
           <AccessibleInput
-            label="Description du sinistre"
+            label={t('claims.descriptionLabel')}
             value={description}
             onChangeText={setDescription}
-            placeholder="Décrivez en détail les dégâts observés sur vos cultures..."
-            accessibilityLabel="Description détaillée du sinistre"
-            accessibilityHint="Décrivez les dégâts pour faciliter l'évaluation"
+            placeholder={t('claims.descriptionPlaceholder')}
+            accessibilityLabel={t('claims.descriptionLabel')}
+            accessibilityHint={t('claims.descriptionHint')}
             required
             style={styles.descriptionInput}
           />
@@ -153,7 +155,7 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
 
         {/* Bouton de soumission */}
         <AccessibleButton
-          title={isEmergency ? "🚨 Soumettre en urgence" : "Soumettre la réclamation"}
+          title={isEmergency ? t('claims.submitEmergency') : t('claims.submitClaim')}
           onPress={handleSubmitClaim}
           loading={submitting}
           disabled={!claimType || !description.trim()}
@@ -161,7 +163,7 @@ export default function ClaimsScreen({ navigation, route }: ClaimsScreenProps) {
             styles.submitButton,
             isEmergency && styles.emergencySubmitButton
           ]}
-          accessibilityHint="Soumettre votre réclamation pour évaluation"
+          accessibilityHint={t('claims.submitHint')}
         />
       </ScrollView>
     </View>

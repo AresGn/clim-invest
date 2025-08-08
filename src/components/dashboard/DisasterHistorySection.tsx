@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import { climateDataService, DisasterSummary, DisasterEvent } from '../../services/climateDataService';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../../utils/constants';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface DisasterHistorySectionProps {
   onDisasterPress?: (disaster: DisasterEvent) => void;
 }
 
 export default function DisasterHistorySection({ onDisasterPress }: DisasterHistorySectionProps) {
+  const { t } = useTranslation();
   const [disasterData, setDisasterData] = useState<DisasterSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
       const data = await climateDataService.getRecentDisasters();
       setDisasterData(data);
     } catch (err) {
-      setError('Impossible de charger les données');
+      setError(t('dashboard.loadingError'));
       console.error('Erreur chargement catastrophes:', err);
     } finally {
       setLoading(false);
@@ -47,11 +49,11 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
   const getRiskLevelText = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high':
-        return '🔴 Risque Élevé';
+        return t('dashboard.highRisk');
       case 'medium':
-        return '🟠 Risque Modéré';
+        return t('dashboard.mediumRisk');
       default:
-        return '🟢 Risque Faible';
+        return t('dashboard.lowRisk');
     }
   };
 
@@ -108,9 +110,9 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
             {climateDataService.getDisasterEmoji(item.type)}
           </Text>
           <Text style={styles.slideType}>
-            {item.type === 'drought' ? 'Sécheresse' :
-             item.type === 'flood' ? 'Inondation' :
-             item.type === 'storm' ? 'Tempête' : 'Cyclone'}
+            {item.type === 'drought' ? t('dashboard.drought') :
+             item.type === 'flood' ? t('dashboard.flood') :
+             item.type === 'storm' ? t('dashboard.storm') : t('dashboard.cyclone')}
           </Text>
         </View>
         <View style={[
@@ -121,9 +123,9 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
             styles.slideSeverityText,
             { color: climateDataService.getSeverityColor(item.severity) }
           ]}>
-            {item.severity === 'critical' ? 'Critique' :
-             item.severity === 'high' ? 'Élevé' :
-             item.severity === 'medium' ? 'Modéré' : 'Faible'}
+            {item.severity === 'critical' ? t('dashboard.critical') :
+             item.severity === 'high' ? t('dashboard.high') :
+             item.severity === 'medium' ? t('dashboard.medium') : t('dashboard.low')}
           </Text>
         </View>
       </View>
@@ -170,13 +172,13 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
   if (error || !disasterData) {
     return (
       <View style={styles.container}>
-        <Text style={styles.sectionTitle}>🌍 Historique des Catastrophes</Text>
+        <Text style={styles.sectionTitle}>{t('dashboard.disasterHistory')}</Text>
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>
-            ⚠️ {error || 'Données indisponibles'}
+            ⚠️ {error || t('dashboard.dataUnavailable')}
           </Text>
           <TouchableOpacity onPress={loadDisasterData} style={styles.retryButton}>
-            <Text style={styles.retryText}>Réessayer</Text>
+            <Text style={styles.retryText}>{t('dashboard.retry')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -208,23 +210,23 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
 
         {/* Filtre par pays */}
         <View style={styles.filterRow}>
-          <Text style={styles.filterLabel}>Pays :</Text>
+          <Text style={styles.filterLabel}>{t('dashboard.country')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {renderFilterButton(selectedCountry, 'all', 'Tous', setSelectedCountry)}
-            {renderFilterButton(selectedCountry, 'benin', 'Bénin', setSelectedCountry)}
-            {renderFilterButton(selectedCountry, 'senegal', 'Sénégal', setSelectedCountry)}
-            {renderFilterButton(selectedCountry, 'niger', 'Niger', setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'all', t('dashboard.all'), setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'benin', t('dashboard.benin'), setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'senegal', t('dashboard.senegal'), setSelectedCountry)}
+            {renderFilterButton(selectedCountry, 'niger', t('dashboard.niger'), setSelectedCountry)}
           </ScrollView>
         </View>
 
         {/* Filtre par type */}
         <View style={styles.filterRow}>
-          <Text style={styles.filterLabel}>Type :</Text>
+          <Text style={styles.filterLabel}>{t('dashboard.type')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {renderFilterButton(selectedType, 'all', 'Tous', setSelectedType)}
-            {renderFilterButton(selectedType, 'drought', 'Sécheresse', setSelectedType)}
-            {renderFilterButton(selectedType, 'flood', 'Inondation', setSelectedType)}
-            {renderFilterButton(selectedType, 'storm', 'Tempête', setSelectedType)}
+            {renderFilterButton(selectedType, 'all', t('dashboard.all'), setSelectedType)}
+            {renderFilterButton(selectedType, 'drought', t('dashboard.drought'), setSelectedType)}
+            {renderFilterButton(selectedType, 'flood', t('dashboard.flood'), setSelectedType)}
+            {renderFilterButton(selectedType, 'storm', t('dashboard.storm'), setSelectedType)}
           </ScrollView>
         </View>
       </View>
@@ -235,11 +237,11 @@ export default function DisasterHistorySection({ onDisasterPress }: DisasterHist
 
         {getFilteredEvents().length === 0 ? (
           <View style={styles.noEventsCard}>
-            <Text style={styles.noEventsText}>✅ Aucun événement trouvé</Text>
+            <Text style={styles.noEventsText}>{t('dashboard.noEventsFound')}</Text>
             <Text style={styles.noEventsSubtext}>
               {selectedCountry !== 'all' || selectedType !== 'all'
-                ? 'Essayez de modifier les filtres'
-                : 'La région est relativement stable'}
+                ? t('dashboard.modifyFilters')
+                : t('dashboard.regionStable')}
             </Text>
           </View>
         ) : (

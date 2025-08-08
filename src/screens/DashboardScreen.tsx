@@ -145,7 +145,7 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
           style={styles.welcomeText}
           accessible={true}
         >
-          Bonjour {user.name} 👋
+          {t('dashboard.hello', { name: user.name })}
         </Text>
         <Text
           style={styles.statusText}

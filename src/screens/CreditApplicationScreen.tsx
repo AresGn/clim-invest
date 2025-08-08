@@ -4,12 +4,14 @@ import { useSelector } from 'react-redux';
 import AccessibleButton from '../components/common/AccessibleButton';
 import { COLORS, ACCESSIBILITY_SETTINGS } from '../utils/constants';
 import { RootState } from '../store/store';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface CreditApplicationScreenProps {
   navigation: any;
 }
 
 export default function CreditApplicationScreen({ navigation }: CreditApplicationScreenProps) {
+  const { t } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,21 +23,21 @@ export default function CreditApplicationScreen({ navigation }: CreditApplicatio
 
   const handleSubmit = async () => {
     if (!formData.requestedAmount || !formData.purpose) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      Alert.alert(t('common.error'), t('creditApplication.fillRequiredFields'));
       return;
     }
 
     setLoading(true);
-    
+
     // Simulation de soumission
     setTimeout(() => {
       setLoading(false);
       Alert.alert(
-        'Demande soumise',
-        'Votre demande de crédit a été soumise avec succès. Vous recevrez une réponse dans les 48h.',
+        t('creditApplication.applicationSubmitted'),
+        t('creditApplication.applicationSubmittedMessage'),
         [
           {
-            text: 'OK',
+            text: t('common.ok'),
             onPress: () => navigation.goBack()
           }
         ]
